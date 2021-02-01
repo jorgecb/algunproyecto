@@ -1,0 +1,1112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="HelloWorld">
+        <s:complexType />
+      </s:element>
+      <s:element name="HelloWorldResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="HelloWorldResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultarAcuseSolicitudSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cRFCEmisor" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cUUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultarAcuseSolicitudSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConsultarAcuseSolicitudSUCResult" type="tns:RespuestaDTOOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RespuestaDTOOfString">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Estado" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Datos" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AceptarRechazarReceptorFirmadoSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cXMLRespuestaFirmadoB64" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AceptarRechazarReceptorFirmadoSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AceptarRechazarReceptorFirmadoSUCResult" type="tns:RespuestaDTOOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultarCancelacionesMultiReceptorSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cRFC_Receptor" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultarCancelacionesMultiReceptorSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConsultarCancelacionesMultiReceptorSUCResult" type="tns:RespuestaDTOOfListOfCancelacionDTO" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RespuestaDTOOfListOfCancelacionDTO">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Estado" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Datos" type="tns:ArrayOfCancelacionDTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfCancelacionDTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CancelacionDTO" nillable="true" type="tns:CancelacionDTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="CancelacionDTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Correo" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CFDI_UUID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RFCReceptor" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RFCEmisor" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EstadoDocumento" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="FechaSolicitud" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="EstadoCancelacion" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="AutorizoCliente" nillable="true" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Observaciones" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="FechaEstatus" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="MontoTotal" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="XMLAcuseB64" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AceptarRechazarReceptorSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="oRequestAceptarRechazarReceptorSUC" type="tns:ArrayOfRequestAceptarRechazarReceptorSUC" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfRequestAceptarRechazarReceptorSUC">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="RequestAceptarRechazarReceptorSUC" nillable="true" type="tns:RequestAceptarRechazarReceptorSUC" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RequestAceptarRechazarReceptorSUC">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="CFDI_UUID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="AutorizoCliente" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AceptarRechazarReceptorSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AceptarRechazarReceptorSUCResult" type="tns:ArrayOfAceptarRechazarResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfAceptarRechazarResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="AceptarRechazarResult" nillable="true" type="tns:AceptarRechazarResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AceptarRechazarResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="CFDI_UUID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Estado" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AceptarRechazarCFDIReceptorSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="oRequestAceptarRechazarReceptorSUC" type="tns:RequestAceptarRechazarReceptorSUC" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AceptarRechazarCFDIReceptorSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AceptarRechazarCFDIReceptorSUCResult" type="tns:RespuestaDTOOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultarCancelacionesReceptorSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultarCancelacionesReceptorSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConsultarCancelacionesReceptorSUCResult" type="tns:RespuestaDTOOfListOfCancelacionDTO" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidarUUIDSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="oListUUID" type="tns:ArrayOfValidarUUIDS" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfValidarUUIDS">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ValidarUUIDS" nillable="true" type="tns:ValidarUUIDS" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ValidarUUIDS">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="CFDI_UUID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RFCReceptor" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RFCEmisor" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="MontoTotal" type="s:decimal" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ValidarUUIDSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ValidarUUIDSUCResult" type="tns:RespuestaDTOOfListOfRespuestaDTOOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RespuestaDTOOfListOfRespuestaDTOOfString">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Estado" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Datos" type="tns:ArrayOfRespuestaDTOOfString" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfRespuestaDTOOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="RespuestaDTOOfString" nillable="true" type="tns:RespuestaDTOOfString" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ConsultarRelacionadosEmisorReceptorSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="_ConsulRelacEmiRecepSUC" type="tns:ConsulRelacEmiRecepSUC" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ConsulRelacEmiRecepSUC">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="cRFC" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="cTipoRFC" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="cCFDI_UUID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ConsultarRelacionadosEmisorReceptorSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConsultarRelacionadosEmisorReceptorSUCResult" type="tns:RespuestaDTOOfListOfRelacionados" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RespuestaDTOOfListOfRelacionados">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Estado" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Datos" type="tns:ArrayOfRelacionados" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfRelacionados">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Relacionados" nillable="true" type="tns:Relacionados" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Relacionados">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Estado" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="CFDI_UUID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UUID_Relacionado" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RFCEmisor" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RFCReceptor" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TipoRelacion" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ConsultarRelacionadosSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cCFDI_UUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultarRelacionadosSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConsultarRelacionadosSUCResult" type="tns:RespuestaDTOOfListOfRelacionados" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelarDocumentoFirmadoSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cRFCEmisor" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cSolicitudFirmada" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="oListaSolicitudCancelacion" type="tns:ArrayOfSolicitudCancelacionFirmadaDTO" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfSolicitudCancelacionFirmadaDTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SolicitudCancelacionFirmadaDTO" nillable="true" type="tns:SolicitudCancelacionFirmadaDTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SolicitudCancelacionFirmadaDTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="CFDI_UUID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RFCReceptor" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="MontoTotal" type="s:decimal" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CancelarDocumentoFirmadoSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CancelarDocumentoFirmadoSUCResult" type="tns:RespuestaDTOOfListOfRespuestaDTOOfCancelacionDTO" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RespuestaDTOOfListOfRespuestaDTOOfCancelacionDTO">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Estado" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Datos" type="tns:ArrayOfRespuestaDTOOfCancelacionDTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfRespuestaDTOOfCancelacionDTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="RespuestaDTOOfCancelacionDTO" nillable="true" type="tns:RespuestaDTOOfCancelacionDTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RespuestaDTOOfCancelacionDTO">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Estado" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Datos" type="tns:CancelacionDTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="LoginExternoSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cUsuario" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cPasswordUsuario" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LoginExternoSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LoginExternoSUCResult" type="tns:RespuestaDTOOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GenerarTokenSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cUsuario" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cPasswordUsuario" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cRFCEmisor" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cAlias" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GenerarTokenSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GenerarTokenSUCResult" type="tns:RespuestaDTOOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GuardarCertificadoSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cUsuario" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cPasswordUsuario" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cRFCEmisor" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cCertificado" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cLLave" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cPasswordCertificado" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GuardarCertificadoSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GuardarCertificadoSUCResult" type="tns:RespuestaDTOOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SolicitarCancelacionSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="oListaSolicitudCancelacion" type="tns:ArrayOfSolicitudCancelacionDTO" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfSolicitudCancelacionDTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SolicitudCancelacionDTO" nillable="true" type="tns:SolicitudCancelacionDTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SolicitudCancelacionDTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="CFDI_UUID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RFCEmisor" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RFCReceptor" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="MontoTotal" type="s:decimal" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SolicitarCancelacionSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SolicitarCancelacionSUCResult" type="tns:RespuestaDTOOfListOfRespuestaDTOOfCancelacionDTO" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SolicitarCancelacionValidacionSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="oListaSolicitudCancelacion" type="tns:ArrayOfSolicitudCancelacionDTO" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SolicitarCancelacionValidacionSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SolicitarCancelacionValidacionSUCResult" type="tns:RespuestaDTOOfListOfRespuestaDTOOfCancelacionDTO" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaCancelacionSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="oListUUID" type="tns:ArrayOfString" />
+            <s:element minOccurs="1" maxOccurs="1" name="dFechaInicio" type="s:dateTime" />
+            <s:element minOccurs="1" maxOccurs="1" name="dFechaFin" type="s:dateTime" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ConsultaCancelacionSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConsultaCancelacionSUCResult" type="tns:RespuestaDTOOfListOfCancelacionDTO" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelarRetencionTimbrado">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cRFCEmisor" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cUUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cLlavePrivada" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cCertificado" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="lEjecucionAsincronica" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelarRetencionTimbradoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CancelarRetencionTimbradoResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelarDocumentoTimbradoSP">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cRFCAdquiriente" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cUUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cLlavePrivada" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cCertificado" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelarDocumentoTimbradoSPResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CancelarDocumentoTimbradoSPResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaCancelacionRetencionTimbrado">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cRFCEmisor" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cFolioSeguimientoSAT" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaCancelacionRetencionTimbradoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConsultaCancelacionRetencionTimbradoResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultarXmlSolicitudSUC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cUuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cToken" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultarXmlSolicitudSUCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConsultarXmlSolicitudSUCResult" type="tns:RespuestaDTOOfUuidObjResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RespuestaDTOOfUuidObjResponse">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Estado" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Datos" type="tns:UuidObjResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UuidObjResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="CFDI_UUID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DocXML" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="FechaAcuse" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="HelloWorldSoapIn">
+    <wsdl:part name="parameters" element="tns:HelloWorld" />
+  </wsdl:message>
+  <wsdl:message name="HelloWorldSoapOut">
+    <wsdl:part name="parameters" element="tns:HelloWorldResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarAcuseSolicitudSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultarAcuseSolicitudSUC" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarAcuseSolicitudSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultarAcuseSolicitudSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="AceptarRechazarReceptorFirmadoSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:AceptarRechazarReceptorFirmadoSUC" />
+  </wsdl:message>
+  <wsdl:message name="AceptarRechazarReceptorFirmadoSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:AceptarRechazarReceptorFirmadoSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarCancelacionesMultiReceptorSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultarCancelacionesMultiReceptorSUC" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarCancelacionesMultiReceptorSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultarCancelacionesMultiReceptorSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="AceptarRechazarReceptorSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:AceptarRechazarReceptorSUC" />
+  </wsdl:message>
+  <wsdl:message name="AceptarRechazarReceptorSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:AceptarRechazarReceptorSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="AceptarRechazarCFDIReceptorSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:AceptarRechazarCFDIReceptorSUC" />
+  </wsdl:message>
+  <wsdl:message name="AceptarRechazarCFDIReceptorSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:AceptarRechazarCFDIReceptorSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarCancelacionesReceptorSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultarCancelacionesReceptorSUC" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarCancelacionesReceptorSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultarCancelacionesReceptorSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="ValidarUUIDSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:ValidarUUIDSUC" />
+  </wsdl:message>
+  <wsdl:message name="ValidarUUIDSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:ValidarUUIDSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarRelacionadosEmisorReceptorSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultarRelacionadosEmisorReceptorSUC" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarRelacionadosEmisorReceptorSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultarRelacionadosEmisorReceptorSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarRelacionadosSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultarRelacionadosSUC" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarRelacionadosSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultarRelacionadosSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="CancelarDocumentoFirmadoSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:CancelarDocumentoFirmadoSUC" />
+  </wsdl:message>
+  <wsdl:message name="CancelarDocumentoFirmadoSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:CancelarDocumentoFirmadoSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="LoginExternoSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:LoginExternoSUC" />
+  </wsdl:message>
+  <wsdl:message name="LoginExternoSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:LoginExternoSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="GenerarTokenSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:GenerarTokenSUC" />
+  </wsdl:message>
+  <wsdl:message name="GenerarTokenSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:GenerarTokenSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="GuardarCertificadoSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:GuardarCertificadoSUC" />
+  </wsdl:message>
+  <wsdl:message name="GuardarCertificadoSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:GuardarCertificadoSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="SolicitarCancelacionSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:SolicitarCancelacionSUC" />
+  </wsdl:message>
+  <wsdl:message name="SolicitarCancelacionSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:SolicitarCancelacionSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="SolicitarCancelacionValidacionSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:SolicitarCancelacionValidacionSUC" />
+  </wsdl:message>
+  <wsdl:message name="SolicitarCancelacionValidacionSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:SolicitarCancelacionValidacionSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaCancelacionSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultaCancelacionSUC" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaCancelacionSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultaCancelacionSUCResponse" />
+  </wsdl:message>
+  <wsdl:message name="CancelarRetencionTimbradoSoapIn">
+    <wsdl:part name="parameters" element="tns:CancelarRetencionTimbrado" />
+  </wsdl:message>
+  <wsdl:message name="CancelarRetencionTimbradoSoapOut">
+    <wsdl:part name="parameters" element="tns:CancelarRetencionTimbradoResponse" />
+  </wsdl:message>
+  <wsdl:message name="CancelarDocumentoTimbradoSPSoapIn">
+    <wsdl:part name="parameters" element="tns:CancelarDocumentoTimbradoSP" />
+  </wsdl:message>
+  <wsdl:message name="CancelarDocumentoTimbradoSPSoapOut">
+    <wsdl:part name="parameters" element="tns:CancelarDocumentoTimbradoSPResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaCancelacionRetencionTimbradoSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultaCancelacionRetencionTimbrado" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaCancelacionRetencionTimbradoSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultaCancelacionRetencionTimbradoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarXmlSolicitudSUCSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultarXmlSolicitudSUC" />
+  </wsdl:message>
+  <wsdl:message name="ConsultarXmlSolicitudSUCSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultarXmlSolicitudSUCResponse" />
+  </wsdl:message>
+  <wsdl:portType name="WSCFDICancelacionSoap">
+    <wsdl:operation name="HelloWorld">
+      <wsdl:input message="tns:HelloWorldSoapIn" />
+      <wsdl:output message="tns:HelloWorldSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarAcuseSolicitudSUC">
+      <wsdl:input message="tns:ConsultarAcuseSolicitudSUCSoapIn" />
+      <wsdl:output message="tns:ConsultarAcuseSolicitudSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AceptarRechazarReceptorFirmadoSUC">
+      <wsdl:input message="tns:AceptarRechazarReceptorFirmadoSUCSoapIn" />
+      <wsdl:output message="tns:AceptarRechazarReceptorFirmadoSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarCancelacionesMultiReceptorSUC">
+      <wsdl:input message="tns:ConsultarCancelacionesMultiReceptorSUCSoapIn" />
+      <wsdl:output message="tns:ConsultarCancelacionesMultiReceptorSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AceptarRechazarReceptorSUC">
+      <wsdl:input message="tns:AceptarRechazarReceptorSUCSoapIn" />
+      <wsdl:output message="tns:AceptarRechazarReceptorSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AceptarRechazarCFDIReceptorSUC">
+      <wsdl:input message="tns:AceptarRechazarCFDIReceptorSUCSoapIn" />
+      <wsdl:output message="tns:AceptarRechazarCFDIReceptorSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarCancelacionesReceptorSUC">
+      <wsdl:input message="tns:ConsultarCancelacionesReceptorSUCSoapIn" />
+      <wsdl:output message="tns:ConsultarCancelacionesReceptorSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidarUUIDSUC">
+      <wsdl:input message="tns:ValidarUUIDSUCSoapIn" />
+      <wsdl:output message="tns:ValidarUUIDSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarRelacionadosEmisorReceptorSUC">
+      <wsdl:input message="tns:ConsultarRelacionadosEmisorReceptorSUCSoapIn" />
+      <wsdl:output message="tns:ConsultarRelacionadosEmisorReceptorSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarRelacionadosSUC">
+      <wsdl:input message="tns:ConsultarRelacionadosSUCSoapIn" />
+      <wsdl:output message="tns:ConsultarRelacionadosSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CancelarDocumentoFirmadoSUC">
+      <wsdl:input message="tns:CancelarDocumentoFirmadoSUCSoapIn" />
+      <wsdl:output message="tns:CancelarDocumentoFirmadoSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LoginExternoSUC">
+      <wsdl:input message="tns:LoginExternoSUCSoapIn" />
+      <wsdl:output message="tns:LoginExternoSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GenerarTokenSUC">
+      <wsdl:input message="tns:GenerarTokenSUCSoapIn" />
+      <wsdl:output message="tns:GenerarTokenSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GuardarCertificadoSUC">
+      <wsdl:input message="tns:GuardarCertificadoSUCSoapIn" />
+      <wsdl:output message="tns:GuardarCertificadoSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SolicitarCancelacionSUC">
+      <wsdl:input message="tns:SolicitarCancelacionSUCSoapIn" />
+      <wsdl:output message="tns:SolicitarCancelacionSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SolicitarCancelacionValidacionSUC">
+      <wsdl:input message="tns:SolicitarCancelacionValidacionSUCSoapIn" />
+      <wsdl:output message="tns:SolicitarCancelacionValidacionSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaCancelacionSUC">
+      <wsdl:input message="tns:ConsultaCancelacionSUCSoapIn" />
+      <wsdl:output message="tns:ConsultaCancelacionSUCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CancelarRetencionTimbrado">
+      <wsdl:input message="tns:CancelarRetencionTimbradoSoapIn" />
+      <wsdl:output message="tns:CancelarRetencionTimbradoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CancelarDocumentoTimbradoSP">
+      <wsdl:input message="tns:CancelarDocumentoTimbradoSPSoapIn" />
+      <wsdl:output message="tns:CancelarDocumentoTimbradoSPSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaCancelacionRetencionTimbrado">
+      <wsdl:input message="tns:ConsultaCancelacionRetencionTimbradoSoapIn" />
+      <wsdl:output message="tns:ConsultaCancelacionRetencionTimbradoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarXmlSolicitudSUC">
+      <wsdl:input message="tns:ConsultarXmlSolicitudSUCSoapIn" />
+      <wsdl:output message="tns:ConsultarXmlSolicitudSUCSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WSCFDICancelacionSoap" type="tns:WSCFDICancelacionSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HelloWorld">
+      <soap:operation soapAction="http://tempuri.org/HelloWorld" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarAcuseSolicitudSUC">
+      <soap:operation soapAction="http://tempuri.org/ConsultarAcuseSolicitudSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AceptarRechazarReceptorFirmadoSUC">
+      <soap:operation soapAction="http://tempuri.org/AceptarRechazarReceptorFirmadoSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarCancelacionesMultiReceptorSUC">
+      <soap:operation soapAction="http://tempuri.org/ConsultarCancelacionesMultiReceptorSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AceptarRechazarReceptorSUC">
+      <soap:operation soapAction="http://tempuri.org/AceptarRechazarReceptorSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AceptarRechazarCFDIReceptorSUC">
+      <soap:operation soapAction="http://tempuri.org/AceptarRechazarCFDIReceptorSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarCancelacionesReceptorSUC">
+      <soap:operation soapAction="http://tempuri.org/ConsultarCancelacionesReceptorSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidarUUIDSUC">
+      <soap:operation soapAction="http://tempuri.org/ValidarUUIDSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarRelacionadosEmisorReceptorSUC">
+      <soap:operation soapAction="http://tempuri.org/ConsultarRelacionadosEmisorReceptorSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarRelacionadosSUC">
+      <soap:operation soapAction="http://tempuri.org/ConsultarRelacionadosSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelarDocumentoFirmadoSUC">
+      <soap:operation soapAction="http://tempuri.org/CancelarDocumentoFirmadoSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LoginExternoSUC">
+      <soap:operation soapAction="http://tempuri.org/LoginExternoSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerarTokenSUC">
+      <soap:operation soapAction="http://tempuri.org/GenerarTokenSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GuardarCertificadoSUC">
+      <soap:operation soapAction="http://tempuri.org/GuardarCertificadoSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SolicitarCancelacionSUC">
+      <soap:operation soapAction="http://tempuri.org/SolicitarCancelacionSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SolicitarCancelacionValidacionSUC">
+      <soap:operation soapAction="http://tempuri.org/SolicitarCancelacionValidacionSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaCancelacionSUC">
+      <soap:operation soapAction="http://tempuri.org/ConsultaCancelacionSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelarRetencionTimbrado">
+      <soap:operation soapAction="http://tempuri.org/CancelarRetencionTimbrado" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelarDocumentoTimbradoSP">
+      <soap:operation soapAction="http://tempuri.org/CancelarDocumentoTimbradoSP" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaCancelacionRetencionTimbrado">
+      <soap:operation soapAction="http://tempuri.org/ConsultaCancelacionRetencionTimbrado" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarXmlSolicitudSUC">
+      <soap:operation soapAction="http://tempuri.org/ConsultarXmlSolicitudSUC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WSCFDICancelacionSoap12" type="tns:WSCFDICancelacionSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HelloWorld">
+      <soap12:operation soapAction="http://tempuri.org/HelloWorld" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarAcuseSolicitudSUC">
+      <soap12:operation soapAction="http://tempuri.org/ConsultarAcuseSolicitudSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AceptarRechazarReceptorFirmadoSUC">
+      <soap12:operation soapAction="http://tempuri.org/AceptarRechazarReceptorFirmadoSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarCancelacionesMultiReceptorSUC">
+      <soap12:operation soapAction="http://tempuri.org/ConsultarCancelacionesMultiReceptorSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AceptarRechazarReceptorSUC">
+      <soap12:operation soapAction="http://tempuri.org/AceptarRechazarReceptorSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AceptarRechazarCFDIReceptorSUC">
+      <soap12:operation soapAction="http://tempuri.org/AceptarRechazarCFDIReceptorSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarCancelacionesReceptorSUC">
+      <soap12:operation soapAction="http://tempuri.org/ConsultarCancelacionesReceptorSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidarUUIDSUC">
+      <soap12:operation soapAction="http://tempuri.org/ValidarUUIDSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarRelacionadosEmisorReceptorSUC">
+      <soap12:operation soapAction="http://tempuri.org/ConsultarRelacionadosEmisorReceptorSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarRelacionadosSUC">
+      <soap12:operation soapAction="http://tempuri.org/ConsultarRelacionadosSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelarDocumentoFirmadoSUC">
+      <soap12:operation soapAction="http://tempuri.org/CancelarDocumentoFirmadoSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LoginExternoSUC">
+      <soap12:operation soapAction="http://tempuri.org/LoginExternoSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerarTokenSUC">
+      <soap12:operation soapAction="http://tempuri.org/GenerarTokenSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GuardarCertificadoSUC">
+      <soap12:operation soapAction="http://tempuri.org/GuardarCertificadoSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SolicitarCancelacionSUC">
+      <soap12:operation soapAction="http://tempuri.org/SolicitarCancelacionSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SolicitarCancelacionValidacionSUC">
+      <soap12:operation soapAction="http://tempuri.org/SolicitarCancelacionValidacionSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaCancelacionSUC">
+      <soap12:operation soapAction="http://tempuri.org/ConsultaCancelacionSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelarRetencionTimbrado">
+      <soap12:operation soapAction="http://tempuri.org/CancelarRetencionTimbrado" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelarDocumentoTimbradoSP">
+      <soap12:operation soapAction="http://tempuri.org/CancelarDocumentoTimbradoSP" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaCancelacionRetencionTimbrado">
+      <soap12:operation soapAction="http://tempuri.org/ConsultaCancelacionRetencionTimbrado" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultarXmlSolicitudSUC">
+      <soap12:operation soapAction="http://tempuri.org/ConsultarXmlSolicitudSUC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WSCFDICancelacion">
+    <wsdl:port name="WSCFDICancelacionSoap" binding="tns:WSCFDICancelacionSoap">
+      <soap:address location="http://edixcfdisecure.ekomercio.com/Cliente_SAT_CFDI_Web/Servicios/WSCFDICancelacion.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WSCFDICancelacionSoap12" binding="tns:WSCFDICancelacionSoap12">
+      <soap12:address location="http://edixcfdisecure.ekomercio.com/Cliente_SAT_CFDI_Web/Servicios/WSCFDICancelacion.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

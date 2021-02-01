@@ -1,0 +1,17 @@
+D:\Develop\PlanSeguro\Windows\PSWindows\FacturacionCFDI\FacturacionCFDI.Servicio\bin\Debug\FacturacionCFDI.Servicio.exe.config
+D:\Develop\PlanSeguro\Windows\PSWindows\FacturacionCFDI\FacturacionCFDI.Servicio\bin\Debug\FacturacionCFDI.Servicio.exe
+D:\Develop\PlanSeguro\Windows\PSWindows\FacturacionCFDI\FacturacionCFDI.Servicio\bin\Debug\FacturacionCFDI.Servicio.pdb
+D:\Develop\PlanSeguro\Windows\PSWindows\FacturacionCFDI\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.Service1.resources
+D:\Develop\PlanSeguro\Windows\PSWindows\FacturacionCFDI\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.csproj.GenerateResource.cache
+D:\Develop\PlanSeguro\Windows\PSWindows\FacturacionCFDI\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.csproj.CoreCompileInputs.cache
+D:\Develop\PlanSeguro\Windows\PSWindows\FacturacionCFDI\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.exe
+D:\Develop\PlanSeguro\Windows\PSWindows\FacturacionCFDI\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.pdb
+C:\xampp\htdocs\PSWindows\FacturacionCFDI.Servicio\bin\Debug\FacturacionCFDI.Servicio.exe.config
+C:\xampp\htdocs\PSWindows\FacturacionCFDI.Servicio\bin\Debug\FacturacionCFDI.Servicio.exe
+C:\xampp\htdocs\PSWindows\FacturacionCFDI.Servicio\bin\Debug\FacturacionCFDI.Servicio.pdb
+C:\xampp\htdocs\PSWindows\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.csprojAssemblyReference.cache
+C:\xampp\htdocs\PSWindows\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.Service1.resources
+C:\xampp\htdocs\PSWindows\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.csproj.GenerateResource.cache
+C:\xampp\htdocs\PSWindows\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.csproj.CoreCompileInputs.cache
+C:\xampp\htdocs\PSWindows\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.exe
+C:\xampp\htdocs\PSWindows\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.pdb
