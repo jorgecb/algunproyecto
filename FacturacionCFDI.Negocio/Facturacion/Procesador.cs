@@ -20,6 +20,7 @@ namespace FacturacionCFDI.Negocio.Facturacion
 
         private const string QUERY_RELACION_FACTURAS_TIMBRAR = "SELECT c.id as id FROM facturacion_comprobante c WHERE c.estatusFacturaId IN (1) AND ROWNUM <= 1";
         private const string QUERY_LOGFACTURAID = "SELECT NVL(MAX(ID) + 1, 1) FROM FACTURACION_LOGFACTURA";
+        private const string QUERY_LOGTIMBRADOID = "SELECT NVL(MAX(ID) + 1, 1) FROM FACTURACION_LOGTIMBRADO";
         private const string QUERY_COMPROBANTE = "SELECT c.estatusFacturaId as id FROM facturacion_comprobante c WHERE c.id = ";
 
         private bool _generaPdf = true;
@@ -72,7 +73,7 @@ namespace FacturacionCFDI.Negocio.Facturacion
                 var xmlTimbrado = _xml.TimbrarComprobante(comprobante.Data);
                 if (xmlTimbrado.Codigo == 1 && xmlTimbrado.Data != null)
                 {
-                    await EstructuraComprobante(idComprobante, xmlTimbrado.Data.ToString());
+                    await EstructuraComprobante(idComprobante);
                     await LogFactura(idComprobante, $"Se guarda estructura XML");
 
                     var archivoXml = await _xml.GenerarArchivoXML(xmlTimbrado.Data.ToString(), comprobante.Data, idComprobante);
@@ -152,49 +153,53 @@ namespace FacturacionCFDI.Negocio.Facturacion
 
                         if (comprobante.Codigo != 1)
                         {
-                            await LogFactura(idComprobante, comprobante.Mensaje);
+                            await EstatusComprobante(idComprobante, 99);
+                            LogTimbrado(idComprobante, comprobante.Mensaje);
                             Console.WriteLine($"Codigo: {comprobante.Codigo}; Mensaje: {comprobante.Mensaje}"); //Se debe remover para Servicio
-                        }
-
-                        var xmlTimbrado = _xml.TimbrarComprobante(comprobante.Data);
-                        if (xmlTimbrado.Codigo == 1 && xmlTimbrado.Data != null)
-                        {
-                            await EstructuraComprobante(idComprobante, xmlTimbrado.Data.ToString());
-                            await LogFactura(idComprobante, $"Se guarda estructura XML");
-
-                            var archivoXml = await _xml.GenerarArchivoXML(xmlTimbrado.Data.ToString(), comprobante.Data, idComprobante);
-
-                            if (archivoXml.Codigo == 1 && archivoXml.Data != null)
+                        } else {
+                            var xmlTimbrado = _xml.TimbrarComprobante(comprobante.Data);
+                            if (xmlTimbrado.Codigo == 1 && xmlTimbrado.Data != null)
                             {
-                                await LogFactura(idComprobante, $"XML Generado");
-                                await EstatusComprobante(idComprobante, 2);
-                                await LogFactura(idComprobante, $"Estatus comprobante actualizado");
-                                await XMLComprobante(idComprobante, archivoXml.Data.RutaRelativa);
-                                await LogFactura(idComprobante, $"Se guarda ruta XML");
+                                await EstructuraComprobante(idComprobante);
+                                //await LogFactura(idComprobante, $"Se guarda estructura XML");
 
-                                var comprobanteTimbrado = _xml.ObtenerComprobanteArchivoXml(archivoXml.Data.RutaAbsoluta);
-                                if (comprobanteTimbrado != null)
+                                var archivoXml = await _xml.GenerarArchivoXML(xmlTimbrado.Data.ToString(), comprobante.Data, idComprobante);
+
+                                if (archivoXml.Codigo == 1 && archivoXml.Data != null)
                                 {
-                                    await LogFactura(idComprobante, $"Se pudo leer XML para obtener UUID y generar PDF");
-                                    await UuidComprobante(idComprobante, comprobanteTimbrado.TimbreFiscalDigital.UUID);
-                                    await LogFactura(idComprobante, $"Se guarda UUID comprobante");
-                                    Console.WriteLine($"XML Generado ({archivoXml.Data.RutaAbsoluta})");
+                                    //await LogFactura(idComprobante, $"XML Generado");
+                                    await EstatusComprobante(idComprobante, 2);
+                                    //await LogFactura(idComprobante, $"Estatus comprobante actualizado");
+                                    await XMLComprobante(idComprobante, archivoXml.Data.RutaRelativa);
+                                    //await LogFactura(idComprobante, $"Se guarda ruta XML");
+
+                                    var comprobanteTimbrado = _xml.ObtenerComprobanteArchivoXml(archivoXml.Data.RutaAbsoluta);
+                                    if (comprobanteTimbrado != null)
+                                    {
+                                        //await LogFactura(idComprobante, $"Se pudo leer XML para obtener UUID y generar PDF");
+                                        LogTimbradoSolucionado(idComprobante);
+                                        await UuidComprobante(idComprobante, comprobanteTimbrado.TimbreFiscalDigital.UUID);
+                                        //await LogFactura(idComprobante, $"Se guarda UUID comprobante");
+                                        Console.WriteLine($"XML Generado ({archivoXml.Data.RutaAbsoluta})");
+                                    }
+                                }
+                                else
+                                {
+                                    await EstatusComprobante(idComprobante, 5);
+                                    LogTimbrado(idComprobante, $"XML no Generado, {archivoXml.Mensaje}");
+                                    //await LogFactura(idComprobante, $"Estatus comprobante actualizado");
+                                    //await LogFactura(idComprobante, $"XML no Generado, {archivoXml.Mensaje}");
+                                    Console.WriteLine($"Codigo: {archivoXml.Codigo}; Mensaje: {archivoXml.Mensaje}"); //Se debe remover para Servicio
                                 }
                             }
                             else
                             {
-                                await EstatusComprobante(idComprobante, 5);
-                                await LogFactura(idComprobante, $"Estatus comprobante actualizado");
-                                await LogFactura(idComprobante, $"XML no Generado, {archivoXml.Mensaje}");
-                                Console.WriteLine($"Codigo: {archivoXml.Codigo}; Mensaje: {archivoXml.Mensaje}"); //Se debe remover para Servicio
+                                await EstatusComprobante(idComprobante, 99);
+                                LogTimbrado(idComprobante, xmlTimbrado.Mensaje);
+                                //await LogFactura(idComprobante, $"Estatus comprobante actualizado");
+                                //await LogFactura(idComprobante, xmlTimbrado.Mensaje);
+                                Console.WriteLine($"Codigo: {xmlTimbrado.Codigo}; Mensaje: {xmlTimbrado.Mensaje}"); //Se debe remover para Servicio
                             }
-                        }
-                        else
-                        {
-                            await EstatusComprobante(idComprobante, 99);
-                            await LogFactura(idComprobante, $"Estatus comprobante actualizado");
-                            await LogFactura(idComprobante, xmlTimbrado.Mensaje);
-                            Console.WriteLine($"Codigo: {xmlTimbrado.Codigo}; Mensaje: {xmlTimbrado.Mensaje}"); //Se debe remover para Servicio
                         }
                     } else {
                         repeat = false;
@@ -231,7 +236,7 @@ namespace FacturacionCFDI.Negocio.Facturacion
                 var xmlTimbrado = _xml.TimbrarComprobante(comprobante.Data);
                 if (xmlTimbrado.Codigo == 1 && xmlTimbrado.Data != null)
                 {
-                    await EstructuraComprobante(idComprobante, xmlTimbrado.Data.ToString());
+                    await EstructuraComprobante(idComprobante);
                     await LogFactura(idComprobante, $"Se guarda estructura XML");
 
                     var archivoXml = await _xml.GenerarArchivoXML(xmlTimbrado.Data.ToString(), comprobante.Data, idComprobante);
@@ -378,6 +383,52 @@ namespace FacturacionCFDI.Negocio.Facturacion
         }
 
         /// <summary>
+        /// Guarda registro en la Tabla FACTURACION_LOGTIMBRADO
+        /// </summary>
+        /// <param name="idComprobante">ID Comprobante</param>
+        /// <param name="mensaje">Mensaje</param>
+        /// <returns></returns>
+        private async Task LogTimbrado(string idComprobante, string mensaje)
+        {
+            try
+            {
+                int exist = _baseDatos.SelectFirst<int>($"SELECT ID FROM FACTURACION_LOGTIMBRADO WHERE COMPROBANTEID = {idComprobante} AND ESTATUS = 0");
+                if (exist == 0)
+                {
+                    int Id = _baseDatos.SelectFirst<int>(QUERY_LOGTIMBRADOID);
+                    if (Id > 0)
+                        _baseDatos.Insert($"INSERT INTO FACTURACION_LOGTIMBRADO VALUES ({Id}, {idComprobante}, SYSDATE, '{mensaje}', NULL, 0)");
+                } else {
+                    _baseDatos.Update($"UPDATE FACTURACION_LOGTIMBRADO SET FECHAHORAERROR = SYSDATE, FECHAHORASOLUCIONADO = SYSDATE, ESTATUS = 0, ERROR = '{mensaje}' WHERE ID = {exist}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Codigo: 0; Mensaje: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Guarda registro en la Tabla FACTURACION_LOGTIMBRADO
+        /// </summary>
+        /// <param name="idComprobante">ID Comprobante</param>
+        /// <param name="mensaje">Mensaje</param>
+        /// <returns></returns>
+        private async Task LogTimbradoSolucionado(string idComprobante)
+        {
+            try
+            {
+                int exist = _baseDatos.SelectFirst<int>($"SELECT ID FROM FACTURACION_LOGTIMBRADO WHERE COMPROBANTEID = {idComprobante}");
+                if(exist != 0)
+                    _baseDatos.Update($"UPDATE FACTURACION_LOGTIMBRADO SET FECHAHORASOLUCIONADO = SYSDATE, ESTATUS = 1 WHERE ID = {exist}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Codigo: 0; Mensaje: {ex.Message}");
+            }
+        }
+
+        /// <summary>
         /// Actualiza en Tabla FACTURACION_COMPROBANTE Estatus del Comprobante
         /// </summary>
         /// <param name="idComprobante">ID Comprobante</param>
@@ -400,11 +451,11 @@ namespace FacturacionCFDI.Negocio.Facturacion
         /// <param name="idComprobante">ID Comprobante</param>
         /// <param name="xml">Estructura XML</param>
         /// <returns></returns>
-        private async Task EstructuraComprobante(string idComprobante, string xml)
+        private async Task EstructuraComprobante(string idComprobante)
         {
             try
             {
-                await _baseDatos.UpdateAsync($"UPDATE facturacion_comprobante SET fechamodificacion = SYSDATE, facturaEstructura = '{xml}' WHERE id = {idComprobante}");
+                await _baseDatos.UpdateAsync($"UPDATE facturacion_comprobante SET fechamodificacion = SYSDATE WHERE id = {idComprobante}");
             }
             catch
             {

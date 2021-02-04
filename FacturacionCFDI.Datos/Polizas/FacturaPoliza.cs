@@ -36,5 +36,8 @@ namespace FacturacionCFDI.Datos.Polizas
         public decimal? PagoSaldoInsoluto { get; set; }
         public int PolizasId { get; set; }
         public decimal TotalPagado { get; set; }
+        public string Sistema { get; set; }
+        public string Poliza { get; set; }
+        public string CausaEndoso { get; set; }
     }
 }

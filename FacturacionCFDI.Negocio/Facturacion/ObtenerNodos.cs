@@ -19,7 +19,7 @@ namespace FacturacionCFDI.Negocio.Facturacion
         private readonly BaseDatos _baseDatos;
 
         private const string _queryConfiguracionSistema = "SELECT id ,llave ,valor FROM ConfiguracionSistema WHERE llave = ";
-        private const string _queryNodoComprobante = "SELECT c.id AS id ,c.version AS version ,c.serie AS serie ,c.folio AS folio ,c.fecha AS fecha ,cfp.formaPago AS formaPago ,c.subtotal AS subtotal ,c.descuento AS descuento ,cm.moneda AS moneda ,c.tipoCambio AS tipoCambio ,c.total AS total ,ctdc.tipoDeComprobante AS tipoDeComprobante ,cmp.metodoPago AS metodoPago ,c.lugarExpedicion AS lugarExpedicion ,cm.decimales AS decimales FROM facturacion_comprobante c INNER JOIN facturacion_catformapago cfp ON c.formaPagoId = cfp.id INNER JOIN facturacion_catmoneda cm ON c.monedaId = cm.id INNER JOIN facturacion_cattipodecomprobante ctdc ON c.tipoDeComprobanteId = ctdc.id INNER JOIN facturacion_catmetodopago cmp ON c.metodoPagoId = cmp.id WHERE c.id = ";
+        private const string _queryNodoComprobante = "SELECT c.id AS id ,c.version AS version ,c.serie AS serie ,c.folio AS folio ,c.fecha AS fecha ,cfp.formaPago AS formaPago ,c.subtotal AS subtotal ,c.descuento AS descuento ,cm.moneda AS moneda ,c.tipoCambio AS tipoCambio ,c.total AS total ,ctdc.tipoDeComprobante AS tipoDeComprobante ,cmp.metodoPago AS metodoPago ,c.lugarExpedicion AS lugarExpedicion ,cm.decimales AS decimales FROM facturacion_comprobante c INNER JOIN facturacion_catformapago cfp ON c.formaPagoId = cfp.formapago INNER JOIN facturacion_catmoneda cm ON c.monedaId = cm.id INNER JOIN facturacion_cattipodecomprobante ctdc ON c.tipoDeComprobanteId = ctdc.id INNER JOIN facturacion_catmetodopago cmp ON c.metodoPagoId = cmp.id WHERE c.id = ";
         private const string _queryNodoCfdiRelacionados = "SELECT cp.tipoRelacion AS tipoRelacion ,cr.uuid AS uuid FROM facturacion_cfdirelacionados cr INNER JOIN facturacion_cattiporelacion cp ON cr.tipoRelacionId = cp.id INNER JOIN facturacion_comprobante c ON c.id = cr.comprobanteid WHERE c.id = ";
         private const string _queryNodoEmisor = "SELECT e.rfc AS rfc ,e.nombre AS nombre ,crf.regimenFiscal AS regimenFiscal FROM facturacion_emisor e INNER JOIN facturacion_catregimenfiscal crf ON e.regimenFiscalId = crf.id INNER JOIN facturacion_comprobante c ON c.emisorid = e.id WHERE c.id = ";
         private const string _queryNodoReceptor = "SELECT r.rfc AS rfc ,CASE r.id WHEN 1 THEN c.receptornombregenerico ELSE r.nombre END AS nombre ,cuc.usocfdi AS usoCfdi FROM facturacion_receptor r INNER JOIN facturacion_comprobante c ON c.receptorid = r.id INNER JOIN facturacion_catusocfdi cuc ON c.usocfdiid = cuc.id WHERE c.id = ";
@@ -726,6 +726,7 @@ namespace FacturacionCFDI.Negocio.Facturacion
             {
                 var resultado = await _baseDatos.SelectFirstAsync<NodoComprobante>(_queryNodoComprobante + idComprobante);
 
+                DateTime datelimit = new DateTime(2021, 01, 31, 23, 59, 00);
                 if (resultado != null)
                 {
                     if (resultado.tipoDeComprobante != "P")
@@ -733,7 +734,7 @@ namespace FacturacionCFDI.Negocio.Facturacion
                         comprobante.Version = resultado.version;
                         comprobante.Serie = resultado.serie;
                         comprobante.Folio = resultado.folio;
-                        comprobante.Fecha = resultado.fecha.ToString("yyyy-MM-ddTHH:mm:ss");
+                        comprobante.Fecha = datelimit.ToString("yyyy-MM-ddTHH:mm:ss");
                         comprobante.NoCertificado = _facturaNumeroCertificado;
                         comprobante.FormaPago = resultado.formaPago;
                         comprobante.FormaPagoSpecified = !string.IsNullOrEmpty(resultado.formaPago) ? true : false;
@@ -790,7 +791,7 @@ namespace FacturacionCFDI.Negocio.Facturacion
                         comprobante.Version = resultado.version;
                         comprobante.Serie = resultado.serie;
                         comprobante.Folio = resultado.folio;
-                        comprobante.Fecha = resultado.fecha.ToString("yyyy-MM-ddTHH:mm:ss");
+                        comprobante.Fecha = datelimit.ToString("yyyy-MM-ddTHH:mm:ss");
                         comprobante.NoCertificado = _facturaNumeroCertificado;
                         comprobante.SubTotal = TruncarDecimal(resultado.subtotal, resultado.decimales, true);
                         comprobante.Descuento = TruncarDecimal(resultado.descuento, resultado.decimales, true);

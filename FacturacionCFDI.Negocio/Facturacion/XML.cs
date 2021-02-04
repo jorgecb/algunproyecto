@@ -466,11 +466,8 @@ namespace FacturacionCFDI.Negocio.Facturacion
                 {
                     var document = XDocument.Parse(resultado);
                     var error = document.Descendants("Error").Select(x => x.Element("ErrorMessage").Value).ToList();
-
-                    return new GenericResponse() { Codigo = 2, Mensaje = error.FirstOrDefault().Replace("'", "''") };
-                }
-                else
-                {
+                    return new GenericResponse(){ Codigo = 2, Mensaje = error.FirstOrDefault().Replace("'", "''") };
+                } else {
                     return new GenericResponse() { Codigo = 1, Data = resultado };
                 }
             }

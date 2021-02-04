@@ -21,6 +21,7 @@ namespace FacturacionCFDI.Negocio.Polizas
         private const string QUERY_FACTURACION_IMPUESTOID = "SELECT NVL(MAX(ID) + 1, 1) FROM FACTURACION_IMPUESTO";
         private const string QUERY_FACTURACION_PAGOID = "SELECT NVL(MAX(ID) + 1, 1) FROM FACTURACION_PAGO";
         private const string QUERY_FACTURACION_PAGOSDOCTORELACIONADOID = "SELECT NVL(MAX(ID) + 1, 1) FROM FACTURACION_PAGOSDOCTORELACIONADO";
+        private const string QUERY_POLIZAS_LOGFACTURA_ID = "SELECT nvl(MAX(ID) + 1, 1) FROM facturacion_logfactura";
         private const string QUERY_FACTURACION_MONEDAID = "SELECT CAST (VALOR AS INTEGER) FROM  CONFIGURACIONSISTEMA WHERE LLAVE = 'PolizaMonedaId'";
         private const string QUERY_FACTURACION_MONEDAIDGENERICO = "SELECT CAST (VALOR AS INTEGER) FROM  CONFIGURACIONSISTEMA WHERE LLAVE = 'PolizaMonedaXXXId'";
         private const string QUERY_FACTURACION_METODOPAGOID = "SELECT CAST (VALOR AS INTEGER) FROM  CONFIGURACIONSISTEMA WHERE LLAVE = 'PolizaMetodoPagoId'";
@@ -41,7 +42,7 @@ namespace FacturacionCFDI.Negocio.Polizas
         private const string QUERY_FACTURACION_CONCEPTOFINANCIAMIENTO37 = "SELECT VALOR FROM  CONFIGURACIONSISTEMA WHERE LLAVE = 'PolizaConceptoFinanciamiento37'";
         private const string QUERY_FACTURACION_CONCEPTOFINANCIAMIENTO39 = "SELECT VALOR FROM  CONFIGURACIONSISTEMA WHERE LLAVE = 'PolizaConceptoFinanciamiento39'";
         private const string QUERY_FACTURACION_RECEPTOR = "SELECT RFCRECEPTOR AS Rfc ,NOMBRERECEPTOR AS Nombre FROM POLIZAS_FACTURACION WHERE ESTATUSFACTURACIONID = 1 AND NOT EXISTS (SELECT RFC FROM FACTURACION_RECEPTOR WHERE RFC = RFCRECEPTOR) GROUP BY RFCRECEPTOR ,NOMBRERECEPTOR ORDER BY RFCRECEPTOR";
-        private const string QUERY_FACTURACION_RELACIONFACTURAS = "SELECT pf.id AS polizafacturacionid, pf.serie AS serie, pf.folio AS folio, pf.fechacomprobante AS fecha, fcfp.formapago AS formapagoid, round(pf.primaneta + pf.financiamiento + pf.gasto, 2) AS subtotal, CASE pf.tipocomprobante WHEN 'P' THEN 0 ELSE 1 END AS tipocambio, round((pf.primaneta + pf.financiamiento + pf.gasto) * 1.16, 2) AS total, fctc.id AS tipocomprobanteid, pf.lugarexpedicion AS lugarexpedicion, fr.id AS rfcreceptorid, fr.rfc AS rfcreceptor, CASE fr.id WHEN 1 THEN pfm.nombrereceptor ELSE NULL END AS nombrereceptor, pf.codigoconcepto AS codigoconcepto, pf.codigoproducto AS conceptonoidentificacion, 1 AS conceptocantidad, round(pf.primaneta, 2) AS conceptoprimamonto, round(pf.primaneta * 0.16, 4) AS conceptoprimaiva, round(pf.financiamiento, 2) AS conceptofinanciamientomonto, round(pf.financiamiento * 0.16, 4) AS conceptofinanciamientoiva, round(pf.gasto, 2) AS conceptogastomonto, round(pf.gasto * 0.16, 4) AS conceptogastoiva, CASE pf.polizamadre WHEN 1 THEN NULL ELSE fc.facturauuid END AS cfdirelacionado, pf.fechapago AS pagofechapago, lpad(pf.formapago, 2, '0') AS pagoformapago, pf.totalpagado AS pagomonto, CASE pf.polizamadre WHEN 1 THEN NULL ELSE fc.facturauuid END AS pagoiddocumento, pf.parcialidad AS pagonumparcialidad, CASE pf.parcialidad WHEN 1 THEN round(pc.totalv, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) END AS pagosaldoanterior, CASE pf.parcialidad WHEN 1 THEN round(pc.totalfacturado - pf.totalpagado, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) END AS pagosaldoinsoluto, pf.polizasid as polizasid FROM polizas_facturacion pf INNER JOIN facturacion_cattipodecomprobante fctc ON pf.tipocomprobante = fctc.tipodecomprobante INNER JOIN facturacion_catformapago fcfp ON lpad(pf.formapago, 2, '0') = fcfp.formapago INNER JOIN facturacion_receptor fr ON pf.rfcreceptor = fr.rfc INNER JOIN polizas_facturacion pfm ON pf.polizasid = pfm.polizasid AND pfm.polizamadre = 1 LEFT JOIN facturacion_comprobante fc ON pfm.comprobanteid = fc.id INNER JOIN polizas_concentrado pc ON pfm.polizasid = pc.id WHERE pf.estatusfacturacionid = 1 ORDER BY pagoiddocumento ASC, PAGONUMPARCIALIDAD ASC";
+        private const string QUERY_FACTURACION_RELACIONFACTURAS = "SELECT pf.id AS polizafacturacionid, pf.serie AS serie, pf.folio AS folio, pf.fechacomprobante AS fecha, CASE WHEN fcfp.formapago is null THEN '99' ELSE fcfp.formapago END AS formapagoid, round(pf.primaneta + pf.financiamiento + pf.gasto, 2) AS subtotal, CASE pf.tipocomprobante WHEN 'P' THEN 0 ELSE 1 END AS tipocambio, round((pf.primaneta + pf.financiamiento + pf.gasto) * 1.16, 2) AS total, fctc.id AS tipocomprobanteid, pf.lugarexpedicion AS lugarexpedicion, fr.id AS rfcreceptorid, fr.rfc AS rfcreceptor, CASE fr.id WHEN 1 THEN pf.nombrereceptor ELSE NULL END AS nombrereceptor, pf.codigoconcepto AS codigoconcepto, pf.codigoproducto AS conceptonoidentificacion, 1 AS conceptocantidad, round(pf.primaneta, 2) AS conceptoprimamonto, round(pf.primaneta * 0.16, 4) AS conceptoprimaiva, round(pf.financiamiento, 2) AS conceptofinanciamientomonto, round(pf.financiamiento * 0.16, 4) AS conceptofinanciamientoiva, round(pf.gasto, 2) AS conceptogastomonto, round(pf.gasto * 0.16, 4) AS conceptogastoiva, CASE pf.polizamadre WHEN 1 THEN NULL ELSE fc.facturauuid END AS cfdirelacionado, pf.fechapago AS pagofechapago, CASE WHEN fcfp.formapago is null THEN '99' ELSE fcfp.formapago END AS pagoformapago, pf.totalpagado AS pagomonto, CASE pf.polizamadre WHEN 1 THEN NULL ELSE fc.facturauuid END AS pagoiddocumento, pf.parcialidad AS pagonumparcialidad, CASE pf.parcialidad WHEN 1 THEN round(pc.totalv, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) END AS pagosaldoanterior, CASE pf.parcialidad WHEN 1 THEN round(pc.totalfacturado - pf.totalpagado, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) - pf.totalpagado END AS pagosaldoinsoluto, pf.polizasid as polizasid, pm.causaendoso as causaendoso FROM POLIZAS_FACTURACION pf LEFT JOIN facturacion_catformapago fcfp ON lpad(pf.formapago, 2, '0') = fcfp.formapago INNER JOIN facturacion_cattipodecomprobante fctc ON pf.tipocomprobante = fctc.tipodecomprobante LEFT JOIN facturacion_receptor fr ON pf.rfcreceptor = fr.rfc INNER JOIN polizas_concentrado pc ON pf.polizasid = pc.id INNER JOIN polizas_facturacion pfm ON pc.id = pfm.polizasid AND pfm.polizamadre = 1 AND pfm.movimientosid is not null INNER JOIN facturacion_comprobante fc ON pfm.comprobanteid = fc.id INNER JOIN polizas_movimientos pm ON pf.movimientosid = pm.id WHERE pf.ESTATUSFACTURACIONID = 1 ORDER BY pagoiddocumento ASC, PAGONUMPARCIALIDAD ASC";
 
         private int _comprobanteId;
         private int _cfdiRelacionadosId;
@@ -96,225 +97,240 @@ namespace FacturacionCFDI.Negocio.Polizas
                 String uuid = "";
                 string updatePolizaFacturacionPagado = "";
                 string updatePolizaFacturacion = "";
+                string llaveunica = "";
+                int cont = 0;
 
-                var querys = relacionFacturas.Select(x =>
+                Console.WriteLine($"Se obtuvo la lista con {relacionFacturas.Count} registros");
+                Console.WriteLine($"ID FACTURACION {_comprobanteId}");
+                foreach (var x in relacionFacturas)
                 {
-                    #region Query INSERT,DELETE FACTURACION_COMPROBANTE
-                    var insComprobante = new StringBuilder();
-                    string delComprobante;
-
-                    insComprobante.Append($"INSERT INTO FACTURACION_COMPROBANTE VALUES({_comprobanteId},'3.3','{x.Serie}','{x.Folio}',TO_DATE('{x.Fecha.ToString("dd/MM/yyyy HH:mm:ss")}', 'dd/mm/yyyy hh24:mi:ss')");
-                    if (x.TipoComprobanteId == 5)
-                        insComprobante.Append($",{x.FormaPagoId},0,0,{_monedaIdGenerico},0,0,{x.TipoComprobanteId},3,'{x.LugarExpedicion}',NULL,{_emisorId}, {x.RfcReceptorId}");
-                    else
-                        insComprobante.Append($",{x.FormaPagoId},{x.SubTotal},0,{_monedaId},1,{x.Total},{x.TipoComprobanteId},{_metodoPagoId},'{x.LugarExpedicion}',NULL,{_emisorId}, {x.RfcReceptorId}");
-                    if (string.IsNullOrWhiteSpace(x.NombreReceptor))
-                        insComprobante.Append($",NULL");
-                    else
-                        insComprobante.Append($",'{x.NombreReceptor}'");
-                    if (x.TipoComprobanteId == 5)
-                        insComprobante.Append($",22");
-                    else
+                    if (x.TipoComprobanteId != 5)
                     {
-                        if (x.RfcReceptor.Length == 12)
-                            insComprobante.Append($",3");
-                        else
-                            insComprobante.Append($",18");
+                        llaveunica = Convert.ToDateTime(x.Fecha).ToString("dd/MM/yyyy") + x.PolizasId + x.Poliza + x.Sistema + x.CausaEndoso.Replace(" ", "") + x.RfcReceptor + x.Total;
+                    } else {
+                        if(x.PagoFechaPago != null)
+                            llaveunica = Convert.ToDateTime(x.PagoFechaPago).ToString("dd/MM/yyyy") + x.PolizasId + x.Poliza + x.Sistema + x.CausaEndoso.Replace(" ", "") + x.PagoNumParcialidad + x.RfcReceptor + x.TotalPagado;
                     }
-                    insComprobante.Append($",1");
-                    insComprobante.Append($",SYSDATE");
-                    insComprobante.Append($",SYSDATE");
-                    insComprobante.Append($",NULL,NULL,NULL,NULL,NULL)");
 
-                    delComprobante = $"DELETE FROM FACTURACION_COMPROBANTE WHERE id = {_comprobanteId}";
+                    Console.WriteLine("hola");
+                    #region Query INSERT,DELETE FACTURACION_COMPROBANTE
+                        var insComprobante = new StringBuilder();
+                        string delComprobante;
+
+                        insComprobante.Append($"INSERT INTO FACTURACION_COMPROBANTE VALUES({_comprobanteId},'3.3','{x.Serie}','{x.Folio}',TO_DATE('{x.Fecha.ToString("dd/MM/yyyy HH:mm:ss")}', 'dd/mm/yyyy hh24:mi:ss')");
+                        if (x.TipoComprobanteId == 5)
+                            insComprobante.Append($",{x.FormaPagoId},0,0,{_monedaIdGenerico},0,0,{x.TipoComprobanteId},3,'{x.LugarExpedicion}',NULL,{_emisorId}, {x.RfcReceptorId}");
+                        else
+                            insComprobante.Append($",{x.FormaPagoId},{x.SubTotal},0,{_monedaId},1,{x.Total},{x.TipoComprobanteId},{_metodoPagoId},'{x.LugarExpedicion}',NULL,{_emisorId}, {x.RfcReceptorId}");
+                        if (string.IsNullOrWhiteSpace(x.NombreReceptor))
+                            insComprobante.Append($",NULL");
+                        else
+                            insComprobante.Append($",'{x.NombreReceptor}'");
+                        if (x.TipoComprobanteId == 5)
+                            insComprobante.Append($",22");
+                        else
+                        {
+                            if (x.RfcReceptor.Length == 12)
+                                insComprobante.Append($",3");
+                            else
+                                insComprobante.Append($",18");
+                        }
+                        insComprobante.Append($",1");
+                        insComprobante.Append($",SYSDATE");
+                        insComprobante.Append($",SYSDATE");
+                        insComprobante.Append($",NULL,NULL,NULL,NULL,NULL,'{llaveunica}',{x.PolizaFacturacionId})");
+
+                        delComprobante = $"DELETE FROM FACTURACION_COMPROBANTE WHERE id = {_comprobanteId}";
                     #endregion
 
                     #region Query INSERT FACTURACION_CFDIRELACIONADO
-                    string insCfdiRelacionado = string.Empty;
-                    string delCfdiRelacionado = string.Empty;
-                    if (!string.IsNullOrWhiteSpace(x.CfdiRelacionado))
-                    {
-                        if (x.TipoComprobanteId == 1)
-                            insCfdiRelacionado = $"INSERT INTO FACTURACION_CFDIRELACIONADOS VALUES ({_cfdiRelacionadosId}, '{x.CfdiRelacionado}', 2, {_comprobanteId})";
-                        if (x.TipoComprobanteId == 2)
-                            insCfdiRelacionado = $"INSERT INTO FACTURACION_CFDIRELACIONADOS VALUES ({_cfdiRelacionadosId}, '{x.CfdiRelacionado}', 1, {_comprobanteId})";
+                        string insCfdiRelacionado = string.Empty;
+                        string delCfdiRelacionado = string.Empty;
+                        if (!string.IsNullOrWhiteSpace(x.CfdiRelacionado))
+                        {
+                            if (x.TipoComprobanteId == 1)
+                                insCfdiRelacionado = $"INSERT INTO FACTURACION_CFDIRELACIONADOS VALUES ({_cfdiRelacionadosId}, '{x.CfdiRelacionado}', 2, {_comprobanteId})";
+                            if (x.TipoComprobanteId == 2)
+                                insCfdiRelacionado = $"INSERT INTO FACTURACION_CFDIRELACIONADOS VALUES ({_cfdiRelacionadosId}, '{x.CfdiRelacionado}', 1, {_comprobanteId})";
 
-                        delCfdiRelacionado = $"DELETE FROM FACTURACION_CFDIRELACIONADOS WHERE comprobanteId = {_comprobanteId}";
-
-                        _cfdiRelacionadosId++;
-                    }
+                            delCfdiRelacionado = $"DELETE FROM FACTURACION_CFDIRELACIONADOS WHERE comprobanteId = {_comprobanteId}";
+                        }
                     #endregion
 
                     #region Query INSERT FACTURACION_CONCEPTO, FACTURACION_IMPUESTO
-                    List<string> insConcepto = new List<string>();
-                    string delConcepto;
-                    List<string> insImpuesto = new List<string>();
-                    string delImpuesto;
-
-                    if (x.TipoComprobanteId == 5)
-                    {
-                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, 51498, NULL, 1, 241, 'Pago', 0, 0, 0, NULL, NULL, {_comprobanteId})");
-                        _conceptoId++;
-                    }
-                    else
-                    {
-                        if (x.ConceptoPrimaMonto > 0)
+                        List<string> insConcepto = new List<string>();
+                        string delConcepto;
+                        List<string> insImpuesto = new List<string>();
+                        string delImpuesto;
+                        int conceptoIdIncial = _conceptoId;
+                        int impuestoIdIncial = _impuestoId;
+                        if (x.TipoComprobanteId == 5)
                         {
-                            switch (x.CodigoConcepto)
+                            insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, 51498, NULL, 1, 241, 'Pago', 0, 0, 0, NULL, NULL, {_comprobanteId})");
+                            _conceptoId++;
+                        }
+                        else
+                        {
+                            if (x.ConceptoPrimaMonto > 0)
                             {
-                                case "34":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoPrima34}', {x.ConceptoPrimaMonto}, {x.ConceptoPrimaMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoPrimaMonto}, 2, 1, 0.16, {x.ConceptoPrimaIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                case "36":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoPrima36}', {x.ConceptoPrimaMonto}, {x.ConceptoPrimaMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoPrimaMonto}, 2, 1, 0.16, {x.ConceptoPrimaIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                case "37":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoPrima37}', {x.ConceptoPrimaMonto}, {x.ConceptoPrimaMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoPrimaMonto}, 2, 1, 0.16, {x.ConceptoPrimaIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                case "39":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoPrima39}', {x.ConceptoPrimaMonto}, {x.ConceptoPrimaMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoPrimaMonto}, 2, 1, 0.16, {x.ConceptoPrimaIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                default:
-                                    break;
+                                switch (x.CodigoConcepto)
+                                {
+                                    case "34":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoPrima34}', {x.ConceptoPrimaMonto}, {x.ConceptoPrimaMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoPrimaMonto}, 2, 1, 0.16, {x.ConceptoPrimaIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    case "36":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoPrima36}', {x.ConceptoPrimaMonto}, {x.ConceptoPrimaMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoPrimaMonto}, 2, 1, 0.16, {x.ConceptoPrimaIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    case "37":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoPrima37}', {x.ConceptoPrimaMonto}, {x.ConceptoPrimaMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoPrimaMonto}, 2, 1, 0.16, {x.ConceptoPrimaIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    case "39":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoPrima39}', {x.ConceptoPrimaMonto}, {x.ConceptoPrimaMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoPrimaMonto}, 2, 1, 0.16, {x.ConceptoPrimaIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+
+                            if (x.ConceptoFinanciamientoMonto > 0)
+                            {
+                                switch (x.CodigoConcepto)
+                                {
+                                    case "34":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoFinanciamiento34}', {x.ConceptoFinanciamientoMonto}, {x.ConceptoFinanciamientoMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoFinanciamientoMonto}, 2, 1, 0.16, {x.ConceptoFinanciamientoIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    case "36":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoFinanciamiento36}', {x.ConceptoFinanciamientoMonto}, {x.ConceptoFinanciamientoMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoFinanciamientoMonto}, 2, 1, 0.16, {x.ConceptoFinanciamientoIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    case "37":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoFinanciamiento37}', {x.ConceptoFinanciamientoMonto}, {x.ConceptoFinanciamientoMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoFinanciamientoMonto}, 2, 1, 0.16, {x.ConceptoFinanciamientoIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    case "39":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoFinanciamiento39}', {x.ConceptoFinanciamientoMonto}, {x.ConceptoFinanciamientoMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoFinanciamientoMonto}, 2, 1, 0.16, {x.ConceptoFinanciamientoIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+
+                            if (x.ConceptoGastoMonto > 0)
+                            {
+                                switch (x.CodigoConcepto)
+                                {
+                                    case "34":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoGasto34}', {x.ConceptoGastoMonto}, {x.ConceptoGastoMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoGastoMonto}, 2, 1, 0.16, {x.ConceptoGastoIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    case "36":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoGasto36}', {x.ConceptoGastoMonto}, {x.ConceptoGastoMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoGastoMonto}, 2, 1, 0.16, {x.ConceptoGastoIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    case "37":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoGasto37}', {x.ConceptoGastoMonto}, {x.ConceptoGastoMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoGastoMonto}, 2, 1, 0.16, {x.ConceptoGastoIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    case "39":
+                                        insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoGasto39}', {x.ConceptoGastoMonto}, {x.ConceptoGastoMonto}, 0, NULL, NULL, {_comprobanteId})");
+                                        insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoGastoMonto}, 2, 1, 0.16, {x.ConceptoGastoIva}, 1, {_conceptoId})");
+                                        _conceptoId++;
+                                        _impuestoId++;
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         }
 
-                        if (x.ConceptoFinanciamientoMonto > 0)
-                        {
-                            switch (x.CodigoConcepto)
-                            {
-                                case "34":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoFinanciamiento34}', {x.ConceptoFinanciamientoMonto}, {x.ConceptoFinanciamientoMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoFinanciamientoMonto}, 2, 1, 0.16, {x.ConceptoFinanciamientoIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                case "36":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoFinanciamiento36}', {x.ConceptoFinanciamientoMonto}, {x.ConceptoFinanciamientoMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoFinanciamientoMonto}, 2, 1, 0.16, {x.ConceptoFinanciamientoIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                case "37":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoFinanciamiento37}', {x.ConceptoFinanciamientoMonto}, {x.ConceptoFinanciamientoMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoFinanciamientoMonto}, 2, 1, 0.16, {x.ConceptoFinanciamientoIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                case "39":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoFinanciamiento39}', {x.ConceptoFinanciamientoMonto}, {x.ConceptoFinanciamientoMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoFinanciamientoMonto}, 2, 1, 0.16, {x.ConceptoFinanciamientoIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-
-                        if (x.ConceptoGastoMonto > 0)
-                        {
-                            switch (x.CodigoConcepto)
-                            {
-                                case "34":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoGasto34}', {x.ConceptoGastoMonto}, {x.ConceptoGastoMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoGastoMonto}, 2, 1, 0.16, {x.ConceptoGastoIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                case "36":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoGasto36}', {x.ConceptoGastoMonto}, {x.ConceptoGastoMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoGastoMonto}, 2, 1, 0.16, {x.ConceptoGastoIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                case "37":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoGasto37}', {x.ConceptoGastoMonto}, {x.ConceptoGastoMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoGastoMonto}, 2, 1, 0.16, {x.ConceptoGastoIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                case "39":
-                                    insConcepto.Add($"INSERT INTO FACTURACION_CONCEPTO VALUES ({_conceptoId}, {_claveProdServId}, '{x.ConceptoNoIdentificacion}', 1, {_claveUnidadId}, '{_descripcionConceptoGasto39}', {x.ConceptoGastoMonto}, {x.ConceptoGastoMonto}, 0, NULL, NULL, {_comprobanteId})");
-                                    insImpuesto.Add($"INSERT INTO FACTURACION_IMPUESTO VALUES ({_impuestoId}, {x.ConceptoGastoMonto}, 2, 1, 0.16, {x.ConceptoGastoIva}, 1, {_conceptoId})");
-                                    _conceptoId++;
-                                    _impuestoId++;
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-
-                    delConcepto = $"DELETE FROM FACTURACION_CONCEPTO WHERE comprobenteId = {_comprobanteId}";
-                    delImpuesto = $"DELETE FROM FACTURACION_IMPUESTO WHERE conceptoId IN (SELECT id FROM FACTURACION_CONCEPTO WHERE comprobanteId = {_comprobanteId})";
+                        delConcepto = $"DELETE FROM FACTURACION_CONCEPTO WHERE comprobenteId = {_comprobanteId}";
+                        delImpuesto = $"DELETE FROM FACTURACION_IMPUESTO WHERE conceptoId IN (SELECT id FROM FACTURACION_CONCEPTO WHERE comprobanteId = {_comprobanteId})";
                     #endregion
 
                     #region Query INSERT FACTURACION_PAGO, FACTURACION_PAGOSDOCTORELACIONADO
-                    string insPago = string.Empty;
-                    string delPago = string.Empty;
-                    string insPagosDoctoRelacionado = string.Empty;
-                    string delPagosDoctoRelacionado = string.Empty;
-                    if (x.TipoComprobanteId == 5)
-                    {
-                        if (string.IsNullOrWhiteSpace(x.PagoNumOperacion))
+                        string insPago = string.Empty;
+                        string delPago = string.Empty;
+                        string insPagosDoctoRelacionado = string.Empty;
+                        string delPagosDoctoRelacionado = string.Empty;
+                        if (x.TipoComprobanteId == 5)
                         {
-                            insPago = $"INSERT INTO FACTURACION_PAGO (ID, VERSION, FECHAPAGO, FORMADEPAGOP, MONEDAP, TIPOCAMBIOP, MONTO, NUMOPERACION, RFCEMISORCTAORD, NOMBANCOORDEXT, CTAORDENANTE, RFCEMISORCTABEN, CTABENEFICIARIO, TIPOCADPAGO, CERTPAGO, CADPAGO, SELLOPAGO, COMPROBANTEID) " +
-                            $"VALUES ({_pagoId},'1.0',TO_DATE('{x.PagoFechaPago?.ToString("dd/MM/yyyy")}','dd/mm/yyyy'), '{x.FormaPagoId}','MXN',1, {x.PagoMonto}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {_comprobanteId})";
-                        } else {
-                            insPago = $"INSERT INTO FACTURACION_PAGO (ID, VERSION, FECHAPAGO, FORMADEPAGOP, MONEDAP, TIPOCAMBIOP, MONTO, NUMOPERACION, RFCEMISORCTAORD, NOMBANCOORDEXT, CTAORDENANTE, RFCEMISORCTABEN, CTABENEFICIARIO, TIPOCADPAGO, CERTPAGO, CADPAGO, SELLOPAGO, COMPROBANTEID) " +
-                            $"VALUES ({_pagoId},'1.0',TO_DATE('{x.PagoFechaPago?.ToString("dd/MM/yyyy")}','dd/mm/yyyy'),'{x.FormaPagoId}','MXN',1, {x.PagoMonto}, '{x.PagoNumOperacion}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {_comprobanteId})";
-                        }
-
-                        if (uuid == "" || uuid != x.PagoIdDocumento){
-                            polizasId = x.PolizasId;
-                            sum_totales = 0;
-                            uuid = x.PagoIdDocumento;
-                            pago_anterior = x.PagoSaldoAnterior;
-                            sum_totales += x.Total;
-
-                            if(x.PagoSaldoInsoluto<0)
+                            if (string.IsNullOrWhiteSpace(x.PagoNumOperacion))
                             {
-                                x.PagoSaldoAnterior = x.Total;
-                                x.PagoSaldoInsoluto = x.PagoSaldoAnterior - x.Total;
+                                insPago = $"INSERT INTO FACTURACION_PAGO (ID, VERSION, FECHAPAGO, FORMADEPAGOP, MONEDAP, TIPOCAMBIOP, MONTO, NUMOPERACION, RFCEMISORCTAORD, NOMBANCOORDEXT, CTAORDENANTE, RFCEMISORCTABEN, CTABENEFICIARIO, TIPOCADPAGO, CERTPAGO, CADPAGO, SELLOPAGO, COMPROBANTEID) " +
+                                $"VALUES ({_pagoId},'1.0',TO_DATE('{x.PagoFechaPago?.ToString("dd/MM/yyyy")}','dd/mm/yyyy'), '{x.FormaPagoId}','MXN',1, {x.PagoMonto}, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {_comprobanteId})";
+                            }
+                            else
+                            {
+                                insPago = $"INSERT INTO FACTURACION_PAGO (ID, VERSION, FECHAPAGO, FORMADEPAGOP, MONEDAP, TIPOCAMBIOP, MONTO, NUMOPERACION, RFCEMISORCTAORD, NOMBANCOORDEXT, CTAORDENANTE, RFCEMISORCTABEN, CTABENEFICIARIO, TIPOCADPAGO, CERTPAGO, CADPAGO, SELLOPAGO, COMPROBANTEID) " +
+                                $"VALUES ({_pagoId},'1.0',TO_DATE('{x.PagoFechaPago?.ToString("dd/MM/yyyy")}','dd/mm/yyyy'),'{x.FormaPagoId}','MXN',1, {x.PagoMonto}, '{x.PagoNumOperacion}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {_comprobanteId})";
                             }
 
-                            insPagosDoctoRelacionado = $"INSERT INTO FACTURACION_PAGOSDOCTORELACIONADO (ID, IDDOCUMENTO, SERIE, FOLIO, MONEDADR, TIPOCAMBIODR, METODODEPAGODR, NUMPARCIALIDAD, IMPSALDOANT, IMPPAGADO, IMPSALDOINSOLUTO, PAGOSID) " +
-                                                   $"VALUES ({_pagosDoctoRelacionadoId}, '{x.PagoIdDocumento}', NULL, NULL, 'MXN', 1, 'PPD', {x.PagoNumParcialidad}, {x.PagoSaldoAnterior}, {x.Total}, {x.PagoSaldoInsoluto}, {_pagoId})";
-                        }else{
-                            decimal? anterior = pago_anterior - sum_totales;
-                            sum_totales += x.Total;
-                            decimal? insoluto = pago_anterior - sum_totales;
-                            if (insoluto < 0)
+                            if (uuid == "" || uuid != x.PagoIdDocumento)
                             {
-                                anterior = x.Total;
-                                insoluto = anterior - x.Total;
+                                polizasId = x.PolizasId;
+                                sum_totales = 0;
+                                uuid = x.PagoIdDocumento;
+                                pago_anterior = x.PagoSaldoAnterior;
+                                sum_totales += x.Total;
+
+                                if (x.PagoSaldoInsoluto < 0)
+                                {
+                                    x.PagoSaldoAnterior = x.Total;
+                                    x.PagoSaldoInsoluto = x.PagoSaldoAnterior - x.Total;
+                                }
+
+                                insPagosDoctoRelacionado = $"INSERT INTO FACTURACION_PAGOSDOCTORELACIONADO (ID, IDDOCUMENTO, SERIE, FOLIO, MONEDADR, TIPOCAMBIODR, METODODEPAGODR, NUMPARCIALIDAD, IMPSALDOANT, IMPPAGADO, IMPSALDOINSOLUTO, PAGOSID) " +
+                                                       $"VALUES ({_pagosDoctoRelacionadoId}, '{x.PagoIdDocumento}', NULL, NULL, 'MXN', 1, 'PPD', {x.PagoNumParcialidad}, {x.PagoSaldoAnterior}, {x.Total}, {x.PagoSaldoInsoluto}, {_pagoId})";
+                            }
+                            else
+                            {
+                                decimal? anterior = pago_anterior - sum_totales;
+                                sum_totales += x.Total;
+                                decimal? insoluto = pago_anterior - sum_totales;
+                                if (insoluto < 0)
+                                {
+                                    anterior = x.Total;
+                                    insoluto = anterior - x.Total;
+                                }
+
+                                insPagosDoctoRelacionado = $"INSERT INTO FACTURACION_PAGOSDOCTORELACIONADO (ID, IDDOCUMENTO, SERIE, FOLIO, MONEDADR, TIPOCAMBIODR, METODODEPAGODR, NUMPARCIALIDAD, IMPSALDOANT, IMPPAGADO, IMPSALDOINSOLUTO, PAGOSID) " +
+                                                       $"VALUES ({_pagosDoctoRelacionadoId}, '{x.PagoIdDocumento}', NULL, NULL, 'MXN', 1, 'PPD', {x.PagoNumParcialidad}, {anterior}, {x.Total}, {insoluto}, {_pagoId})";
                             }
 
-                            insPagosDoctoRelacionado = $"INSERT INTO FACTURACION_PAGOSDOCTORELACIONADO (ID, IDDOCUMENTO, SERIE, FOLIO, MONEDADR, TIPOCAMBIODR, METODODEPAGODR, NUMPARCIALIDAD, IMPSALDOANT, IMPPAGADO, IMPSALDOINSOLUTO, PAGOSID) " +
-                                                   $"VALUES ({_pagosDoctoRelacionadoId}, '{x.PagoIdDocumento}', NULL, NULL, 'MXN', 1, 'PPD', {x.PagoNumParcialidad}, {anterior}, {x.Total}, {insoluto}, {_pagoId})";
+                            decimal? pagado = sum_totales + x.TotalPagado;
+                            //updatePolizaFacturacionPagado = $"UPDATE POLIZAS_CONCENTRADO SET TOTALPAGADO = {pagado} WHERE ID = {x.PolizasId}";
+
+                            delPago = $"DELETE FROM FACTURACION_PAGO WHERE comprobanteId = {_comprobanteId}";
+                            delPagosDoctoRelacionado = $"DELETE FROM FACTURACION_PAGOSDOCTORELACIONADO WHERE pagosId IN (SELECT id FACTURACION_PAGO WHERE comprobanteId = {_comprobanteId})";
                         }
-
-                        decimal? pagado = sum_totales + x.TotalPagado;
-                        //updatePolizaFacturacionPagado = $"UPDATE POLIZAS_CONCENTRADO SET TOTALPAGADO = {pagado} WHERE ID = {x.PolizasId}";
-
-                        delPago = $"DELETE FROM FACTURACION_PAGO WHERE comprobanteId = {_comprobanteId}";
-                        delPagosDoctoRelacionado = $"DELETE FROM FACTURACION_PAGOSDOCTORELACIONADO WHERE pagosId IN (SELECT id FACTURACION_PAGO WHERE comprobanteId = {_comprobanteId})";
-                        _pagoId++;
-                        _pagosDoctoRelacionadoId++;
-                    }
 
                     #endregion
 
@@ -322,141 +338,162 @@ namespace FacturacionCFDI.Negocio.Polizas
 
                     int tipoComprobante = x.TipoComprobanteId;
 
-                    _comprobanteId++;
-
-                    return new
-                    {
-                        queryInsComprobante = insComprobante.ToString(),
-                        queryDelComprobante = delComprobante,
-                        queryInsCfdiRelacionado = insCfdiRelacionado,
-                        queryDelCfdiRelacionado = delCfdiRelacionado,
-                        queryInsConcepto = insConcepto,
-                        queryDelConcepto = delConcepto,
-                        queryInsImpuesto = insImpuesto,
-                        queryDelImpuesto = delImpuesto,
-                        queryInsPago = insPago,
-                        queryDelPago = delPago,
-                        queryInsPagosDoctoRelacionado = insPagosDoctoRelacionado,
-                        queryDelPagosDoctoRelacionado = delPagosDoctoRelacionado,
-                        queryUpdPolizasFacturacion = updPolizaFacturacion,
-                        //queryUpdatePolizaFacturacionPagado = updatePolizaFacturacionPagado,
-                        tipoComprobanteFactura = tipoComprobante
-                    };
-                }).ToList();
-
-                int cont = 0;
-
-                foreach (var q in querys)
-                {
-                    var insertComprobate = await _baseDatos.InsertAsync(q.queryInsComprobante);
+                    
+                    var insertComprobate = _baseDatos.Insert(insComprobante.ToString());
                     if (!insertComprobate)
                     {
-                        Console.WriteLine($"Error query: {q.queryInsComprobante}");
+                        Console.WriteLine($"Error query: {insComprobante}");
+                        _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
+                        LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al insertar en comprobante");
                     }
                     else
                     {
                         int contInsertConcepto = 0;
-                        foreach (var concepto in q.queryInsConcepto)
+                        foreach (var concepto in insConcepto)
                         {
                             var insertConcepto = await _baseDatos.InsertAsync(concepto);
                             if (insertConcepto)
                                 contInsertConcepto++;
                         }
 
-                        if (contInsertConcepto != q.queryInsConcepto.Count)
+                        if (contInsertConcepto != insConcepto.Count)
                         {
                             Console.WriteLine($"Error: No se guardaron todos los conceptos");
-                            await _baseDatos.DeleteAsync(q.queryDelConcepto);
-                            await _baseDatos.DeleteAsync(q.queryDelComprobante);
+                            _conceptoId = conceptoIdIncial;
+                            _baseDatos.Delete(delConcepto);
+                            _baseDatos.Delete(delComprobante);
+                            _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
+                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con los conceptos");
                         }
                         else
                         {
-                            if (q.tipoComprobanteFactura != 5)
+                            if (x.TipoComprobanteId != 5)
                             {
                                 int contInsertImpuesto = 0;
-                                foreach (var impuesto in q.queryInsImpuesto)
+                                foreach (var impuesto in insImpuesto)
                                 {
                                     var insertImpuesto = await _baseDatos.InsertAsync(impuesto);
                                     if (insertImpuesto)
                                         contInsertImpuesto++;
                                 }
 
-                                if (contInsertImpuesto != q.queryInsImpuesto.Count)
+                                if (contInsertImpuesto != insImpuesto.Count)
                                 {
                                     Console.WriteLine($"Error: No se guardaron todos los impuestos");
-                                    await _baseDatos.DeleteAsync(q.queryDelConcepto);
-                                    await _baseDatos.DeleteAsync(q.queryDelComprobante);
+                                    _conceptoId = conceptoIdIncial;
+                                    _impuestoId = impuestoIdIncial;
+                                    _baseDatos.Delete(delImpuesto);
+                                    _baseDatos.Delete(delConcepto);
+                                    _baseDatos.Delete(delComprobante);
+                                    _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
+                                    LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con los impuestos");
                                 }
                                 else
                                 {
-                                    if (string.IsNullOrWhiteSpace(q.queryInsCfdiRelacionado))
+                                    if (string.IsNullOrWhiteSpace(insCfdiRelacionado))
                                     {
-                                        var updatePolizasFacturacion = await _baseDatos.UpdateAsync(q.queryUpdPolizasFacturacion);
+                                        var updatePolizasFacturacion = _baseDatos.Update(updPolizaFacturacion);
                                         if (!updatePolizasFacturacion)
                                         {
-                                            Console.WriteLine($"Error query: {q.queryUpdPolizasFacturacion}");
-                                            await _baseDatos.DeleteAsync(q.queryDelImpuesto);
-                                            await _baseDatos.DeleteAsync(q.queryDelConcepto);
-                                            await _baseDatos.DeleteAsync(q.queryDelComprobante);
+                                            Console.WriteLine($"Error query: {updPolizaFacturacion}");
+                                            _conceptoId = conceptoIdIncial;
+                                            _impuestoId = impuestoIdIncial;
+                                            _baseDatos.Delete(delImpuesto);
+                                            _baseDatos.Delete(delConcepto);
+                                            _baseDatos.Delete(delComprobante);
+                                            _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
+                                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al editar comprobante");
                                         }
                                         else
                                         {
                                             cont++;
+                                            _comprobanteId++;
                                         }
                                     }
                                     else
                                     {
-                                        var insertCfdiRelacionado = await _baseDatos.InsertAsync(q.queryInsCfdiRelacionado);
+                                        var insertCfdiRelacionado = _baseDatos.Insert(insCfdiRelacionado);
                                         if (!insertCfdiRelacionado)
                                         {
-                                            Console.WriteLine($"Error query: {q.queryInsCfdiRelacionado}");
-                                            await _baseDatos.DeleteAsync(q.queryDelImpuesto);
-                                            await _baseDatos.DeleteAsync(q.queryDelConcepto);
-                                            await _baseDatos.DeleteAsync(q.queryDelComprobante);
+                                            Console.WriteLine($"Error query: {insCfdiRelacionado}");
+                                            _conceptoId = conceptoIdIncial;
+                                            _impuestoId = impuestoIdIncial;
+                                            _baseDatos.Delete(delImpuesto);
+                                            _baseDatos.Delete(delConcepto);
+                                            _baseDatos.Delete(delComprobante);
+                                            _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
+                                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al querer insertar el cfdirelacionado");
                                         }
                                         else
                                         {
-                                            var updatePolizasFacturacion = await _baseDatos.UpdateAsync(q.queryUpdPolizasFacturacion);
+                                            var updatePolizasFacturacion = _baseDatos.Update(updPolizaFacturacion);
                                             if (!updatePolizasFacturacion)
                                             {
-                                                Console.WriteLine($"Error query: {q.queryUpdPolizasFacturacion}");
-                                                await _baseDatos.DeleteAsync(q.queryDelImpuesto);
-                                                await _baseDatos.DeleteAsync(q.queryDelConcepto);
-                                                await _baseDatos.DeleteAsync(q.queryDelComprobante);
-                                            }
-                                            else
-                                            {
+                                                Console.WriteLine($"Error query: {updPolizaFacturacion}");
+                                                _conceptoId = conceptoIdIncial;
+                                                _impuestoId = impuestoIdIncial;
+                                                _baseDatos.Delete(delImpuesto);
+                                                _baseDatos.Delete(delConcepto);
+                                                _baseDatos.Delete(delCfdiRelacionado);
+                                                _baseDatos.Delete(delComprobante);
+                                                _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
+                                                LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al editar comprobante");
+                                            } else {
                                                 cont++;
+                                                _comprobanteId++;
+                                                _cfdiRelacionadosId++;
                                             }
                                         }
                                     }
                                 }
                             }
 
-                            if (q.tipoComprobanteFactura == 5)
+                            if (x.TipoComprobanteId == 5)
                             {
-                                var insertPago = await _baseDatos.InsertAsync(q.queryInsPago);
+                                var insertPago = _baseDatos.Insert(insPago);
                                 if (!insertPago)
                                 {
-                                    Console.WriteLine($"Error query: {q.queryInsPago}");
-                                    await _baseDatos.DeleteAsync(q.queryDelConcepto);
-                                    await _baseDatos.DeleteAsync(q.queryDelComprobante);
+                                    Console.WriteLine($"Error query: {insPago}");
+                                    _conceptoId = conceptoIdIncial;
+                                    _baseDatos.Delete(delConcepto);
+                                    _baseDatos.Delete(delComprobante);
+                                    _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
+                                    LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con al insertar el pago");
                                 }
                                 else
                                 {
-                                    var insertPagosDoctoRel = await _baseDatos.InsertAsync(q.queryInsPagosDoctoRelacionado);
+                                    var insertPagosDoctoRel = _baseDatos.Insert(insPagosDoctoRelacionado);
                                     if (!insertPagosDoctoRel)
                                     {
-                                        Console.WriteLine($"Error query: {q.queryInsPagosDoctoRelacionado}");
-                                        await _baseDatos.DeleteAsync(q.queryDelPago);
-                                        await _baseDatos.DeleteAsync(q.queryDelConcepto);
-                                        await _baseDatos.DeleteAsync(q.queryDelComprobante);
+                                        Console.WriteLine($"Error query: {insPagosDoctoRelacionado}");
+                                        _conceptoId = conceptoIdIncial;
+                                        _baseDatos.Delete(delPago);
+                                        _baseDatos.Delete(delConcepto);
+                                        _baseDatos.Delete(delComprobante);
+                                        _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
+                                        LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con al insertar el docto relacionado");
                                     }
                                     else
                                     {
-                                        //await _baseDatos.InsertAsync(q.queryUpdatePolizaFacturacionPagado);
-                                        await _baseDatos.InsertAsync(q.queryUpdPolizasFacturacion);
-                                        cont++;
+                                        var updatePolizasFacturacion = _baseDatos.Update(updPolizaFacturacion);
+                                        if (!updatePolizasFacturacion)
+                                        {
+                                            Console.WriteLine($"Error query: {updPolizaFacturacion}");
+                                            _conceptoId = conceptoIdIncial;
+                                            _baseDatos.Delete(delPagosDoctoRelacionado);
+                                            _baseDatos.Delete(delPago);
+                                            _baseDatos.Delete(delConcepto);
+                                            _baseDatos.Delete(delComprobante);
+                                            _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
+                                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al editar comprobante");
+                                        }
+                                        else
+                                        {
+                                            cont++;
+                                            _comprobanteId++;
+                                            _pagoId++;
+                                            _pagosDoctoRelacionadoId++;
+                                        }
                                     }
                                 }
                             }
@@ -505,7 +542,7 @@ namespace FacturacionCFDI.Negocio.Polizas
 
                 var querys = rfcReceptor.Select(x =>
                 {
-                    string Nombre = x.Nombre.Replace("'","''");
+                    string Nombre = x.Nombre.Replace("Ã'", "Ñ");
                     var query = $"INSERT INTO FACTURACION_RECEPTOR VALUES ({idReceptor++},'{x.Rfc}','{Nombre}', SYSDATE, SYSDATE)";
 
                     return new { InsReceptor = query };
@@ -791,6 +828,27 @@ namespace FacturacionCFDI.Negocio.Polizas
                     Codigo = 0,
                     Mensaje = $"Excepción; Método: {this.GetType().FullName}; Mensaje: {ex.Message}"
                 };
+            }
+        }
+
+        /// <summary>
+        /// Guarda registro en Tabla FACTURACION_LOGFACTURA
+        /// </summary>
+        /// <param name="comprobanteId">ID Tabla FACTURACION_COMPROBANTE</param>
+        /// <param name="mensaje">Mensaje</param>
+        /// <returns></returns>
+        private async Task LogFacturacion(int facturacionId, string mensaje)
+        {
+            try
+            {
+                var id = _baseDatos.SelectFirst<int>(QUERY_POLIZAS_LOGFACTURA_ID);
+
+                if (id > 0)
+                    _baseDatos.Insert($"INSERT INTO FACTURACION_LOGFACTURA VALUES ({id}, SYSDATE, '{mensaje}', {facturacionId})");
+            }
+            catch
+            {
+                //Guardar LOG TXT
             }
         }
     }

@@ -19,3 +19,10 @@ C:\Users\lenovo\Downloads\PSWindows\PSWindows\WSFacturacion\obj\Debug\WSFacturac
 C:\Users\lenovo\Downloads\PSWindows\PSWindows\WSFacturacion\obj\Debug\WSFacturacion.csproj.CoreCompileInputs.cache
 C:\Users\lenovo\Downloads\PSWindows\PSWindows\WSFacturacion\obj\Debug\WSFacturacion.dll
 C:\Users\lenovo\Downloads\PSWindows\PSWindows\WSFacturacion\obj\Debug\WSFacturacion.pdb
+C:\xampp\htdocs\algunproyecto\WSFacturacion\bin\WSFacturacion.dll.config
+C:\xampp\htdocs\algunproyecto\WSFacturacion\bin\WSFacturacion.dll
+C:\xampp\htdocs\algunproyecto\WSFacturacion\bin\WSFacturacion.pdb
+C:\xampp\htdocs\algunproyecto\WSFacturacion\obj\Debug\WSFacturacion.csprojAssemblyReference.cache
+C:\xampp\htdocs\algunproyecto\WSFacturacion\obj\Debug\WSFacturacion.csproj.CoreCompileInputs.cache
+C:\xampp\htdocs\algunproyecto\WSFacturacion\obj\Debug\WSFacturacion.dll
+C:\xampp\htdocs\algunproyecto\WSFacturacion\obj\Debug\WSFacturacion.pdb

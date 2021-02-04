@@ -17,3 +17,10 @@ C:\Users\lenovo\Downloads\PSWindows\PSWindows\FacturacionCFDI.Datos\obj\Debug\Fa
 C:\Users\lenovo\Downloads\PSWindows\PSWindows\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.csproj.CoreCompileInputs.cache
 C:\Users\lenovo\Downloads\PSWindows\PSWindows\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.dll
 C:\Users\lenovo\Downloads\PSWindows\PSWindows\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.pdb
+C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Datos\bin\Debug\FacturacionCFDI.Datos.dll.config
+C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Datos\bin\Debug\FacturacionCFDI.Datos.dll
+C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Datos\bin\Debug\FacturacionCFDI.Datos.pdb
+C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.csprojAssemblyReference.cache
+C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.csproj.CoreCompileInputs.cache
+C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.dll
+C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.pdb
