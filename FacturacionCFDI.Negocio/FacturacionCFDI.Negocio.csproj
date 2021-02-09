@@ -57,6 +57,7 @@
     <Compile Include="Facturacion\PDF.cs" />
     <Compile Include="Facturacion\Procesador.cs" />
     <Compile Include="Polizas\Cancelacion.cs" />
+    <Compile Include="Polizas\Facturacion.cs" />
     <Compile Include="Polizas\Refacturacion.cs" />
     <Compile Include="Polizas\Procesador.cs" />
     <Compile Include="Polizas\SincronizacionCliente.cs" />

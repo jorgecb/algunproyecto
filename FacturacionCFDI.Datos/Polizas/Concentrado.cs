@@ -27,5 +27,7 @@ namespace FacturacionCFDI.Datos.Polizas
         public decimal TotalPagado { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
+        public decimal TmpGlobal { get; set; }
+        public decimal TmpPago { get; set; }
     }
 }

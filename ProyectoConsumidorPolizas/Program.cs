@@ -56,16 +56,104 @@ namespace ProyectoConsumidorPolizas
                         await procesador.ProcesoSincronizarInformacionCliente();
                         break;
                     case 2:
-                        await procesador.ProcesoSincronizarFacturaGlobal();
+                        {
+                            await procesador.ProcesoSincronizarFacturaGlobal();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoActualizarEstatusFacturacionXTimbrarFacturaGlobal();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoSincronizarTablasFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoSincronizarEstatusFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoActualizarEstatusFacturacionXTimbrarFacturaGlobal();
+                        }
                         break;
                     case 3:
-                        await procesador.ProcesoSincronizarFacturaNotaDebito();
+                        {
+                            await procesador.ProcesoSincronizarFacturaNotaDebito();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoActualizarEstatusFacturacionXTimbrarFacturaGlobal();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoSincronizarTablasFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoSincronizarEstatusFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoActualizarEstatusFacturacionXTimbrarFacturaGlobal();
+                        }
                         break;
                     case 4:
-                        await procesador.ProcesoSincronizarFacturaNotaCredito();
+                        {
+                            await procesador.ProcesoSincronizarFacturaNotaCredito();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoActualizarEstatusFacturacionXTimbrarFacturaGlobal();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoSincronizarTablasFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoSincronizarEstatusFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoActualizarEstatusFacturacionXTimbrarFacturaGlobal();
+                        }
                         break;
                     case 5:
-                        await procesador.ProcesoSincronizarFacturaPagos();
+                        {
+                            await procesador.ProcesoSincronizarFacturaPagos();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoActualizarEstatusFacturacionXTimbrarFacturaGlobal();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoSincronizarTablasFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoSincronizarEstatusFacturacion();
+                            Console.WriteLine(" ");
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(" ");
+                            await procesador.ProcesoActualizarEstatusFacturacionXTimbrarFacturaGlobal();
+                        }
                         break;
                     case 6:
                         await procesador.ProcesoSincronizarRefacturacion();

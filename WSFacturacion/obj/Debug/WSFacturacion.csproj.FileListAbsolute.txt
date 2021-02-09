@@ -26,3 +26,10 @@ C:\xampp\htdocs\algunproyecto\WSFacturacion\obj\Debug\WSFacturacion.csprojAssemb
 C:\xampp\htdocs\algunproyecto\WSFacturacion\obj\Debug\WSFacturacion.csproj.CoreCompileInputs.cache
 C:\xampp\htdocs\algunproyecto\WSFacturacion\obj\Debug\WSFacturacion.dll
 C:\xampp\htdocs\algunproyecto\WSFacturacion\obj\Debug\WSFacturacion.pdb
+C:\xampp\htdocs\PSFAuto\WSFacturacion\bin\WSFacturacion.dll.config
+C:\xampp\htdocs\PSFAuto\WSFacturacion\bin\WSFacturacion.dll
+C:\xampp\htdocs\PSFAuto\WSFacturacion\bin\WSFacturacion.pdb
+C:\xampp\htdocs\PSFAuto\WSFacturacion\obj\Debug\WSFacturacion.csprojAssemblyReference.cache
+C:\xampp\htdocs\PSFAuto\WSFacturacion\obj\Debug\WSFacturacion.csproj.CoreCompileInputs.cache
+C:\xampp\htdocs\PSFAuto\WSFacturacion\obj\Debug\WSFacturacion.dll
+C:\xampp\htdocs\PSFAuto\WSFacturacion\obj\Debug\WSFacturacion.pdb

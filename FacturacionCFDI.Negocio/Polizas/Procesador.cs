@@ -15,6 +15,7 @@ namespace FacturacionCFDI.Negocio.Polizas
         private readonly SincronizacionFacturacion _facturacion;
         private readonly Cancelacion _cancelacion;
         private readonly Refacturacion _refacturacion;
+        private readonly Facturacion _facturacionEmision;
 
         private string _conexionCliente = ConfigurationManager.ConnectionStrings["InformacionPS"].ToString();
         private string _conexionPolizas = ConfigurationManager.ConnectionStrings["AdmonPolizaPS"].ToString();
@@ -28,6 +29,7 @@ namespace FacturacionCFDI.Negocio.Polizas
             _facturacion = new SincronizacionFacturacion(_baseDatosPolizas);
             _cancelacion = new Cancelacion(_baseDatosPolizas);
             _refacturacion = new Refacturacion(_baseDatosPolizas);
+            _facturacionEmision = new Facturacion(_baseDatosPolizas);
         }
 
         /// <summary>
@@ -272,6 +274,25 @@ namespace FacturacionCFDI.Negocio.Polizas
                 {
                     Console.WriteLine($"Código: {proceso.Codigo}; Mensaje: {proceso.Mensaje}");
                     Console.WriteLine($"Fin Proceso de Refacturación  {DateTime.Now}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Excepción: {ex.Message}");
+            }
+        }
+
+        public async Task ProcesoFacturacion()
+        {
+            try
+            {
+                Console.WriteLine($"Inicia Proceso Facturación {DateTime.Now}");
+                var proceso = await _facturacionEmision.ProcesoFacturacion();
+
+                if (proceso != null)
+                {
+                    Console.WriteLine($"Código: {proceso.Codigo}; Mensaje: {proceso.Mensaje}");
+                    Console.WriteLine($"Fin Proceso Facturación  {DateTime.Now}");
                 }
             }
             catch (Exception ex)

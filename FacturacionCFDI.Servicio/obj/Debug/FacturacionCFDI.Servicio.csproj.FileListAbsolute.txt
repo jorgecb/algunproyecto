@@ -24,3 +24,12 @@ C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI
 C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.csproj.CoreCompileInputs.cache
 C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.exe
 C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.pdb
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Servicio\bin\Debug\FacturacionCFDI.Servicio.exe.config
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Servicio\bin\Debug\FacturacionCFDI.Servicio.exe
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Servicio\bin\Debug\FacturacionCFDI.Servicio.pdb
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.csprojAssemblyReference.cache
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.Service1.resources
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.csproj.GenerateResource.cache
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.csproj.CoreCompileInputs.cache
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.exe
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Servicio\obj\Debug\FacturacionCFDI.Servicio.pdb

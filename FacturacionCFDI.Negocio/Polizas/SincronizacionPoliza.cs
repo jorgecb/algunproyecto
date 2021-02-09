@@ -71,7 +71,6 @@ namespace FacturacionCFDI.Negocio.Polizas
 
 
                 var idFacturacion = await _baseDatos.SelectFirstAsync<int>(QUERY_POLIZAS_FACTURACION_ID);
-                idFacturacion = 600001;
                 if (idFacturacion == 0)
                     return new GenericResponse()
                     {
@@ -94,8 +93,11 @@ namespace FacturacionCFDI.Negocio.Polizas
                 int cont = 0;
                 Console.WriteLine($"Se obtuvo la lista con {modelo.Count} registros");
                 Console.WriteLine($"ID FACTURACION {idFacturacion}");
+
+                int idFacIni = idFacturacion;
+                int idFacFin = 0;
                 foreach (var x in modelo) {
-                    string RfcReceptor = "-", LugarExpedicion = "01900";
+                    string RfcReceptor = "-";
                     if (x.RfcReceptor != null){
                         RfcReceptor = x.RfcReceptor;
                     }
@@ -164,9 +166,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                 LogFacturacion(x.Id, $"Ya existia en concentrado");
                             }
                             Console.WriteLine($"Entre por poliza parametrizada ID_MOVIMIENTO: {x.Id}");
-                        }
-                        else if (polizaParametrizada == false)
-                        {
+                        } else if (polizaParametrizada == false) {
                             if (ConcentradoIdExist == 0)
                             {
                                 #region Query INSERT POLIZAS_CONCENTRADO
@@ -223,7 +223,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                 sbInsertFacturacion.Append($",'{x.CodigoProducto}'");
                                 sbInsertFacturacion.Append($",'{x.FormaPago}'");
                                 sbInsertFacturacion.Append($",'PPD'");
-                                sbInsertFacturacion.Append($",'{LugarExpedicion}'");
+                                sbInsertFacturacion.Append($",'{x.LugarExpedicion}'");
                                 sbInsertFacturacion.Append($",NULL");
                                 sbInsertFacturacion.Append($",{x.PrimaNeta}");
                                 sbInsertFacturacion.Append($",{x.Financiamiento}");
@@ -275,7 +275,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                             sbInsertFacturacion.Append($",'{x.CodigoProducto}'");
                             sbInsertFacturacion.Append($",'{x.FormaPago}'");
                             sbInsertFacturacion.Append($",'PPD'");
-                            sbInsertFacturacion.Append($",'14120'");
+                            sbInsertFacturacion.Append($",'{x.LugarExpedicion}'");
                             sbInsertFacturacion.Append($",NULL");
                             sbInsertFacturacion.Append($",{x.PrimaNeta}");
                             sbInsertFacturacion.Append($",{x.Financiamiento}");
@@ -361,6 +361,20 @@ namespace FacturacionCFDI.Negocio.Polizas
                         }
                     }
                 }
+                idFacFin = idFacturacion;
+
+                List<Movimientos> rows = _baseDatos.Select<Movimientos>($"SELECT * FROM POLIZAS_MOVIMIENTOS WHERE ID IN (SELECT MOVIMIENTOSID FROM POLIZAS_FACTURACION WHERE ID >= {idFacIni} AND ID <= {idFacFin} AND POLIZASID = 0)");
+
+                foreach (var row in rows)
+                {
+                    int idCon = _baseDatos.SelectFirst<int>($"SELECT ID FROM POLIZAS_CONCENTRADO WHERE SISTEMA = '{row.Sistema}' AND POLIZA = '{row.Poliza}' AND ANIOINICIO = '{row.FechaInicio.ToString("yyyy")}'");
+                    if (idCon != 0)
+                    {
+                        _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET POLIZASID = {idCon} WHERE MOVIMIENTOSID = {row.Id}");
+                    }
+
+                }
+
                 #region ERROR CODIGO
                 /*var querys = modelo.Select(x =>
                 {
@@ -666,6 +680,8 @@ namespace FacturacionCFDI.Negocio.Polizas
                 Console.WriteLine($"Se obtuvo la lista con {modelo.Count} registros");
 
                 int cont = 0;
+                int idFacIni = idFacturacion;
+                int idFacFin = 0;
 
                 foreach (var x in modelo)
                 {
@@ -753,6 +769,21 @@ namespace FacturacionCFDI.Negocio.Polizas
                             cont++;
                         }
                     }
+                }
+
+                idFacFin = idFacturacion;
+
+                List<Movimientos> rows = _baseDatos.Select<Movimientos>($"SELECT * FROM POLIZAS_MOVIMIENTOS WHERE ID IN (SELECT MOVIMIENTOSID FROM POLIZAS_FACTURACION WHERE ID >= {idFacIni} AND ID <= {idFacFin} AND POLIZASID = 0)");
+
+                foreach (var row in rows)
+                {
+                    int idCon = _baseDatos.SelectFirst<int>($"SELECT ID FROM POLIZAS_CONCENTRADO WHERE SISTEMA = '{row.Sistema}' AND POLIZA = '{row.Poliza}' AND ANIOINICIO = '{row.FechaInicio.ToString("yyyy")}'");
+                    if (idCon != 0)
+                    {
+                        _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET POLIZASID = {idCon} WHERE MOVIMIENTOSID = {row.Id}");
+                        Console.WriteLine("entro");
+                    }
+
                 }
 
                 #region Error Codigo
@@ -931,6 +962,8 @@ namespace FacturacionCFDI.Negocio.Polizas
 
                 int cont = 0;
                 Console.WriteLine($"Se obtuvo la lista con {modelo.Count} registros");
+                int idFacIni = idFacturacion;
+                int idFacFin = 0;
 
                 foreach (var x in modelo)
                 {
@@ -1018,6 +1051,21 @@ namespace FacturacionCFDI.Negocio.Polizas
                             cont++;
                         }
                     }
+                }
+
+                idFacFin = idFacturacion;
+
+                List<Movimientos> rows = _baseDatos.Select<Movimientos>($"SELECT * FROM POLIZAS_MOVIMIENTOS WHERE ID IN (SELECT MOVIMIENTOSID FROM POLIZAS_FACTURACION WHERE ID >= {idFacIni} AND ID <= {idFacFin} AND POLIZASID = 0)");
+
+                foreach (var row in rows)
+                {
+                    int idCon = _baseDatos.SelectFirst<int>($"SELECT ID FROM POLIZAS_CONCENTRADO WHERE SISTEMA = '{row.Sistema}' AND POLIZA = '{row.Poliza}' AND ANIOINICIO = '{row.FechaInicio.ToString("yyyy")}'");
+                    if (idCon != 0)
+                    {
+                        _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET POLIZASID = {idCon} WHERE MOVIMIENTOSID = {row.Id}");
+                        Console.WriteLine("entro");
+                    }
+
                 }
                 #region ERROR CODIGO
                 /*var querys = modelo.Select(x =>
@@ -1174,6 +1222,8 @@ namespace FacturacionCFDI.Negocio.Polizas
 
                 int cont = 0;
                 Console.WriteLine($"Se obtuvo la lista con {modelo.Count} registros");
+                int idFacIni = idFacturacion;
+                int idFacFin = 0;
 
                 foreach (var x in modelo)
                 {
@@ -1261,19 +1311,20 @@ namespace FacturacionCFDI.Negocio.Polizas
                     }
                 }
 
-                List<Movimientos> rows = _baseDatos.Select<Movimientos>("SELECT * FROM POLIZAS_MOVIMIENTOS WHERE ID IN (SELECT MOVIMIENTOSID FROM POLIZAS_FACTURACION WHERE ID>= 605062 AND POLIZASID = 0)");
+                idFacFin = idFacturacion;
+
+                List<Movimientos> rows = _baseDatos.Select<Movimientos>($"SELECT * FROM POLIZAS_MOVIMIENTOS WHERE ID IN (SELECT MOVIMIENTOSID FROM POLIZAS_FACTURACION WHERE ID >= {idFacIni} AND ID <= {idFacFin} AND POLIZASID = 0)");
 
                 foreach (var row in rows)
                 {
-                    int idConcentrado = _baseDatos.SelectFirst<int>($"SELECT ID FROM POLIZAS_CONCENTRADO WHERE SISTEMA = '{row.Sistema}' AND POLIZA = '{row.Poliza}' AND ANIOINICIO = '{row.FechaInicio.ToString("yyyy")}'");
-                    if (idConcentrado != 0)
+                    int idCon = _baseDatos.SelectFirst<int>($"SELECT ID FROM POLIZAS_CONCENTRADO WHERE SISTEMA = '{row.Sistema}' AND POLIZA = '{row.Poliza}' AND ANIOINICIO = '{row.FechaInicio.ToString("yyyy")}'");
+                    if (idCon != 0)
                     {
-                        _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET POLIZASID = {idConcentrado} WHERE MOVIMIENTOSID = {row.Id}");
+                        _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET POLIZASID = {idCon} WHERE MOVIMIENTOSID = {row.Id}");
                         Console.WriteLine("entro");
                     }
 
                 }
-
 
                 #region ERROR CODIGO
                 /*var querys = modelo.Select(x =>

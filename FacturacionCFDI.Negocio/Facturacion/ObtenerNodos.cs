@@ -725,8 +725,6 @@ namespace FacturacionCFDI.Negocio.Facturacion
             try
             {
                 var resultado = await _baseDatos.SelectFirstAsync<NodoComprobante>(_queryNodoComprobante + idComprobante);
-
-                DateTime datelimit = new DateTime(2021, 01, 31, 23, 59, 00);
                 if (resultado != null)
                 {
                     if (resultado.tipoDeComprobante != "P")
@@ -734,7 +732,7 @@ namespace FacturacionCFDI.Negocio.Facturacion
                         comprobante.Version = resultado.version;
                         comprobante.Serie = resultado.serie;
                         comprobante.Folio = resultado.folio;
-                        comprobante.Fecha = datelimit.ToString("yyyy-MM-ddTHH:mm:ss");
+                        comprobante.Fecha = resultado.fecha.ToString("yyyy-MM-ddTHH:mm:ss");
                         comprobante.NoCertificado = _facturaNumeroCertificado;
                         comprobante.FormaPago = resultado.formaPago;
                         comprobante.FormaPagoSpecified = !string.IsNullOrEmpty(resultado.formaPago) ? true : false;
@@ -791,7 +789,7 @@ namespace FacturacionCFDI.Negocio.Facturacion
                         comprobante.Version = resultado.version;
                         comprobante.Serie = resultado.serie;
                         comprobante.Folio = resultado.folio;
-                        comprobante.Fecha = datelimit.ToString("yyyy-MM-ddTHH:mm:ss");
+                        comprobante.Fecha = resultado.fecha.ToString("yyyy-MM-ddTHH:mm:ss");
                         comprobante.NoCertificado = _facturaNumeroCertificado;
                         comprobante.SubTotal = TruncarDecimal(resultado.subtotal, resultado.decimales, true);
                         comprobante.Descuento = TruncarDecimal(resultado.descuento, resultado.decimales, true);

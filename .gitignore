@@ -1,38 +1,23 @@
-# Compiled source #
-###################
-*.com
-*.class
-*.dll
-*.exe
-*.o
-*.so
+/vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
 
-# Packages #
-############
-# it's better to unpack these files and commit the raw source
-# git has its own built in compression methods
-packages
-*.7z
-*.dmg
-*.gz
-*.iso
-*.jar
-*.rar
-*.tar
-*.zip
+# Laravel 4 specific
+bootstrap/compiled.php
+app/storage/
 
-# Logs and databases #
-######################
-*.log
-*.sql
-*.sqlite
+# Laravel 5 & Lumen specific
+public/storage
+public/hot
 
-# OS generated files #
-######################
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Laravel 5 & Lumen specific with changed public path
+public_html/storage
+public_html/hot
+
+storage/*.key
+.env
+Homestead.yaml
+Homestead.json
+/.vagrant
+.phpunit.result.cache

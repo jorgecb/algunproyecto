@@ -33,5 +33,6 @@ namespace FacturacionCFDI.Datos.Polizas
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public int EstatusFacturacionId { get; set; }
+        public int MovimientosId { get; set; }
     }
 }

@@ -75,6 +75,7 @@
     <Compile Include="Facturacion\Nodos\NodoComprobante.cs" />
     <Compile Include="Facturacion\Nodos\NodoEmisor.cs" />
     <Compile Include="Facturacion\TablasDB\ConfiguracionSistema.cs" />
+    <Compile Include="Polizas\LogTimbrado.cs" />
     <Compile Include="Polizas\Parametros.cs" />
     <Compile Include="Polizas\ConcentradoFacturaPago.cs" />
     <Compile Include="Polizas\Concentrado.cs" />

@@ -102,11 +102,12 @@ namespace FacturacionCFDI.Negocio.Polizas
                     if (string.IsNullOrWhiteSpace(d))
                         mov.Add(m);
                 }
+                int cont = 0;
                 int count2 = 0;
                 Console.WriteLine($"Obtuve lista para añadir a movimientos - Count: {mov.Count}");
+                Parametros lugarexpedicion = _baseDatosPolizas.SelectFirst<Parametros>("SELECT * FROM PARAMETRO WHERE PARAMETRO = 'LUGAREXPEDICION'");
 
-                var querys = mov.Select(x =>
-                {
+                foreach (var x in mov){
                     var sbInsert = new StringBuilder();
                     sbInsert.Append("INSERT INTO POLIZAS_MOVIMIENTOS VALUES(");
                     sbInsert.Append($"{idMovimiento}");
@@ -138,7 +139,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                     if (string.IsNullOrWhiteSpace(x.UuidFactura)) sbInsert.Append($",NULL"); else sbInsert.Append($",'{x.UuidFactura}'");
                     if (string.IsNullOrWhiteSpace(x.CodigoProducto)) sbInsert.Append($",NULL"); else sbInsert.Append($",'{x.CodigoProducto}'");
                     if (string.IsNullOrWhiteSpace(x.FormaPago)) sbInsert.Append($",NULL"); else sbInsert.Append($",'{x.FormaPago}'");
-                    if (string.IsNullOrWhiteSpace(x.LugarExpedicion)) sbInsert.Append($",NULL"); else sbInsert.Append($",'{x.LugarExpedicion}'");
+                    sbInsert.Append($",'{lugarexpedicion.Valor}'");
                     sbInsert.Append($",'{x.CodigoConcepto}'");
                     sbInsert.Append($",{x.PrimaNeta}");
                     sbInsert.Append($",{x.Financiamiento}");
@@ -152,33 +153,21 @@ namespace FacturacionCFDI.Negocio.Polizas
                     sbInsert.Append($",'{x.LlaveSincronizacion}'");
                     if (x.IdSolicitudExterna == null) sbInsert.Append($",NULL)"); else sbInsert.Append($",{x.IdSolicitudExterna})");
 
-                    idMovimiento++;
-                    count2++;
-                    return new
+                    var insertMov = _baseDatosPolizas.Insert(sbInsert.ToString());
+                    if (insertMov == true)
                     {
-                        llave = x.LlaveSincronizacion,
-                        queryIns = sbInsert.ToString()
-                    };
-                }).ToList();
-
-
-                int cont = 0;
-                foreach (var q in querys)
-                {
-                    var insertMov = _baseDatosPolizas.Insert(q.queryIns);
-
-                    if (insertMov){
                         cont++;
+                        idMovimiento++;
                     } else {
-                        if (q.queryIns != "")
-                            LogMovimientos(q.llave, $"Hubo un error para insertar a movimientos");
+                        LogMovimientos(x.LlaveSincronizacion, $"Hubo un error para insertar a movimientos");
                     }
+                    count2++;
                 }
 
                 return new GenericResponse()
                 {
-                    Codigo = mov.Count == cont ? 1 : 2,
-                    Mensaje = mov.Count == cont ? $"Sincronización completa, registros obtenenidos {count2} - registros guardados {cont}." : $"Hubo error con el guardado de los registros, registros obtenenidos {modelo.Count} - registros guardados {cont}. Para más detalles consultar LOG."
+                    Codigo = count2 == cont ? 1 : 2,
+                    Mensaje = count2 == cont ? $"Sincronización completa, registros obtenenidos {count2} - registros guardados {cont}." : $"Hubo error con el guardado de los registros, registros obtenenidos {count2} - registros guardados {cont}. Para más detalles consultar LOG."
                 };
 
             }
@@ -253,47 +242,83 @@ namespace FacturacionCFDI.Negocio.Polizas
 
             try
             {
-                List<RUE> rue_list_anterior, rue_list_actual, rue_list;
+                List<RUE> rue_list_anterior, rue_list_actual;
+                List<RUE> rue_list = null;
 
-                query = $"SELECT * FROM {tabla_actual}";
+                query = $"SELECT * FROM OSIRIS.{tabla_actual}";
                 rue_list_actual = _baseDatosCliente.Select<RUE>(query);
 
                 if (dia <= 15)
                 {
-                    query = $"SELECT * FROM {tabla_anterior}";
+                    query = $"SELECT * FROM OSIRIS.{tabla_anterior}";
                     rue_list_anterior = _baseDatosCliente.Select<RUE>(query);
-                    if (rue_list_actual == null)
-                        rue_list = rue_list_anterior.ToList();
-                    else
-                        rue_list = rue_list_actual.Concat(rue_list_anterior).ToList();
-                }
-                else
-                {
+                    if (rue_list_actual == null){
+                        if(rue_list_anterior != null)
+                        {
+                            rue_list = rue_list_anterior.ToList();
+                            Console.WriteLine($"Obtuvo la lista de {tabla_anterior} --- Count: " + rue_list.Count());
+                        }
+                            
+                    } else {
+                        if (rue_list_anterior == null)
+                        {
+                            rue_list = rue_list_actual.ToList();
+                            Console.WriteLine($"Obtuvo la lista de {tabla_actual} --- Count: " + rue_list.Count());
+                        } else {
+                            rue_list = rue_list_actual.Concat(rue_list_anterior).ToList();
+                            Console.WriteLine($"Obtuvo la lista de {tabla_anterior} - {tabla_actual} --- Count: " + rue_list.Count());
+                        }
+                    }
+                } else {
                     rue_list = rue_list_actual.ToList();
+                    Console.WriteLine($"Obtuvo la lista de {tabla_actual} --- Count: " + rue_list.Count());
                 }
 
-                Console.WriteLine("Obtuvo la lista de RUE ENERO 2021 - Count: "+ rue_list.Count());
+                
                 Parametros rowCausas = _baseDatosPolizas.SelectFirst<Parametros>("SELECT * FROM PARAMETRO WHERE ID = 18");
+                int cont = 0;
+
                 if (rowCausas == null)
+                {
+                    Console.WriteLine("Hay un error con el parametro de las causas de endoso disponibles (PARAMETROS ID 18)");
                     return false;
+                }
+                    
 
                 string causaEndoso = "";
                 string[] causasEndoso = rowCausas.Valor.Split(',');
-                Console.WriteLine("Causas de endoso");
+                Console.WriteLine("Se obtuvo la lista de causas de endoso");
                 // SISTEMA - POLIZA - AÑO/INICIO - ENDOSO - MONTO
-                var querys = rue_list.Select(x =>
-                {
+                foreach(var x in rue_list) { 
+                    
                     query2 = x;
                     var sbInsert = new StringBuilder();
+                    var llave = new StringBuilder();
+                    if (string.IsNullOrWhiteSpace(x.Sistema)) llave.Append("-/"); else llave.Append($"{x.Sistema}/");
+                    if (string.IsNullOrWhiteSpace(x.Poliza)) llave.Append("-/"); else llave.Append($"{x.Poliza}/");
+                    if (string.IsNullOrWhiteSpace(x.FechaInicio.ToString())) llave.Append("-/"); else llave.Append($"{x.FechaInicio}/");
+                    if (string.IsNullOrWhiteSpace(x.CausaEndoso)) llave.Append("-/"); else llave.Append($"{x.CausaEndoso}/");
+                    llave.Append($"{x.PrimaNeta}/");
+                    llave.Append($"{x.Financiamiento}/");
+                    llave.Append($"{x.Gasto}");
                     bool errorRow = false;
                     string errorDescrip = "";
+                    if (x.Cod_Ramo.Length > 2)
+                    {
+                        errorRow = true;
+                        errorDescrip = "El codigo de ramo no es numerico o es mayor a 2 caracteres";
+                    }
                     if (x.Sistema == null || x.Poliza == null || x.FechaInicio == null || x.CausaEndoso == null || errorRow == true)
                     {
                         if (errorRow == false)
-                            query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Los campos de la llave de sincronización no estan completos.',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
+                            query = $@"INSERT INTO RUE_NO_CARGADOS VALUES('Los campos de la llave de sincronización no estan completos LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
                         else
-                            query = $"INSERT INTO RUE_NO_CARGADOS VALUES('{errorDescrip}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
-                        _baseDatosPolizas.Insert(query);
+                            query = $@"INSERT INTO RUE_NO_CARGADOS VALUES('{errorDescrip} LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
+                        
+                        var jala = _baseDatosPolizas.Insert(query);
+                        if (jala == false) {
+                            Console.WriteLine(query);
+                        }
                     } else {
                         foreach (var rowCausa in causasEndoso)
                         {
@@ -321,11 +346,15 @@ namespace FacturacionCFDI.Negocio.Polizas
                                 cadena = cadena.Substring(0, cadena.Length - 2);
                             }
                         }
+                        // SISTEMA - POLIZA - AÑO/INICIO - ENDOSO - MONTO
                         String txt_prima = cadena;
                         llavesincronizacion.Append($"{txt_prima}");
 
                         query = $"SELECT * FROM POLIZAS_MOVIMIENTOS WHERE LLAVESINCRONIZACION = '{llavesincronizacion}'";
                         Movimientos row = _baseDatosCliente.SelectFirst<Movimientos>(query);
+
+                        query = $"SELECT * FROM RUE WHERE SISTEMA = '{x.Sistema}' AND POLIZA = '{x.Poliza}' AND FECHAINICIO = TO_DATE('{x.FechaInicio.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy') AND PRIMANETA = {x.PrimaNeta} AND FINANCIAMIENTO = {x.Financiamiento} AND GASTO = {x.Gasto} AND CAUSAENDOSO = '{x.CausaEndoso}'";
+                        RUE rue = _baseDatosCliente.SelectFirst<RUE>(query);
 
                         var error = 0;
                         if (causaEndoso == "ENDOSO" || causaEndoso == "MOD 527" || causaEndoso == "MNC 52 / MNA 52" || causaEndoso == "MFC 53 / MNC 53")
@@ -350,7 +379,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                         {
                             error = 999;
                         }
-                        if (row != null)
+                        if (row != null || rue != null)
                         {
                             error = 1000;
                         }
@@ -495,53 +524,60 @@ namespace FacturacionCFDI.Negocio.Polizas
                                     sbInsert.Append($",'{x.Siniestros}'");
                                     sbInsert.Append($",{x.Comisiones}");
                                     sbInsert.Append($",{x.Prima_Total})");
+                                    var insertado = _baseDatosPolizas.Insert(sbInsert.ToString());
+                                    if (insertado == true) {
+                                        cont++;
+                                    } else {
+                                        query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1003)";
+                                        var jala = _baseDatosPolizas.Insert(query);
+                                        if (jala == false)
+                                        {
+                                            Console.WriteLine(query);
+                                        }
+                                    }
                                 }
                                 break;
                             case 998:
                                 {
-                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('{llavesincronizacion}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
-                                    _baseDatosPolizas.Insert(query);
+                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
+                                    var jala = _baseDatosPolizas.Insert(query);
+                                    if (jala == false)
+                                    {
+                                        Console.WriteLine(query);
+                                    }
                                 }
                                 break;
                             case 999:
                                 {
-                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('{llavesincronizacion}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
-                                    _baseDatosPolizas.Insert(query);
+                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
+                                    var jala = _baseDatosPolizas.Insert(query);
+                                    if (jala == false)
+                                    {
+                                        Console.WriteLine(query);
+                                    }
                                 }
                                 break;
                             case 1000:
                                 {
-                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('{llavesincronizacion}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
-                                    _baseDatosPolizas.Insert(query);
+                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
+                                    var jala = _baseDatosPolizas.Insert(query);
+                                    if (jala == false)
+                                    {
+                                        Console.WriteLine(query);
+                                    }
                                 }
                                 break;
                             case 1001:
                                 {
-                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('{llavesincronizacion}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
-                                    _baseDatosPolizas.Insert(query);
+                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
+                                    var jala = _baseDatosPolizas.Insert(query);
+                                    if (jala == false)
+                                    {
+                                        Console.WriteLine(query);
+                                    }
                                 }
                                 break;
                         }
-                    }
-                    return new {
-                        poliza = x.Poliza,
-                        sistema = x.Sistema,
-                        prima = x.Prima_Total,
-                        queryIns = sbInsert.ToString() 
-                    };
-                }).ToList();
-
-                int cont = 0;
-
-                foreach (var q in querys)
-                {
-                    var insertMov = _baseDatosPolizas.Insert(q.queryIns);
-
-                    if (insertMov){
-                        cont++;
-                    } else { 
-                        if(q.queryIns != "")
-                            _baseDatosPolizas.Insert($"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con Poliza: {q.poliza} - Sistema: {q.sistema} - Prima: {q.prima}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)");
                     }
                 }
 
@@ -578,33 +614,61 @@ namespace FacturacionCFDI.Negocio.Polizas
             string tabla_actual = $"RUP_{mesActualLetra}_{año}";
             try
             {
-                List<RUP> rup_list_anterior, rup_list_actual, rup_list;
+                List<RUP> rup_list_anterior, rup_list_actual;
+                List<RUP> rup_list = null;
 
-                query = $"SELECT * FROM {tabla_actual}";
+                query = $"SELECT * FROM OSIRIS.{tabla_actual}";
                 rup_list_actual = _baseDatosCliente.Select<RUP>(query);
 
                 if (dia <= 15)
                 {
-                    query = $"SELECT * FROM {tabla_anterior}";
+                    query = $"SELECT * FROM OSIRIS.{tabla_anterior}";
                     rup_list_anterior = _baseDatosCliente.Select<RUP>(query);
                     if (rup_list_actual == null)
-                        rup_list = rup_list_anterior.ToList();
+                    {
+                        if (rup_list_anterior != null)
+                        {
+                            rup_list = rup_list_anterior.ToList();
+                            Console.WriteLine($"Obtuvo la lista de {tabla_anterior} --- Count: " + rup_list.Count());
+                        }
+
+                    }
                     else
-                        rup_list = rup_list_actual.Concat(rup_list_anterior).ToList();
-                    Console.WriteLine();
+                    {
+                        if (rup_list_anterior == null)
+                        {
+                            rup_list = rup_list_actual.ToList();
+                            Console.WriteLine($"Obtuvo la lista de {tabla_actual} --- Count: " + rup_list.Count());
+                        }
+                        else
+                        {
+                            rup_list = rup_list_actual.Concat(rup_list_anterior).ToList();
+                            Console.WriteLine($"Obtuvo la lista de {tabla_anterior} - {tabla_actual} --- Count: " + rup_list.Count());
+                        }
+                    }
                 }
                 else
                 {
                     rup_list = rup_list_actual.ToList();
+                    Console.WriteLine($"Obtuvo la lista de {tabla_actual} --- Count: " + rup_list.Count());
                 }
 
                 Console.WriteLine("Obtuvo la lista de RUP - Count: " + rup_list.Count());
                 // SISTEMA - POLIZA - AÑO/INICIO - ENDOSO - MONTO
+                int cont = 0;
 
-                var querys = rup_list.Select(x =>
+                foreach (var x in rup_list)
                 {
                     query2 = x;
                     var sbInsert = new StringBuilder();
+                    var llave = new StringBuilder();
+                    if (string.IsNullOrWhiteSpace(x.Sistema)) llave.Append("-/"); else llave.Append($"{x.Sistema}/");
+                    if (string.IsNullOrWhiteSpace(x.Poliza)) llave.Append("-/"); else llave.Append($"{x.Poliza}/");
+                    if (string.IsNullOrWhiteSpace(x.FechaInicio.ToString())) llave.Append("-/"); else llave.Append($"{x.FechaInicio}/");
+                    if (string.IsNullOrWhiteSpace(x.Cuota)) llave.Append("PAGO/-/"); else llave.Append($"PAGO/{x.Cuota}/");
+                    llave.Append($"{x.PrimaNeta}/");
+                    llave.Append($"{x.Financiamiento}/");
+                    llave.Append($"{x.Gasto}");
                     bool errorRow = false;
                     string errorDescrip = "";
                     if (x.Cod_Ramo.Length > 2)
@@ -612,13 +676,16 @@ namespace FacturacionCFDI.Negocio.Polizas
                         errorRow = true;
                         errorDescrip = "El codigo de ramo no es numerico o es mayor a 2 caracteres";
                     }
-                    if (x.Sistema == null  || x.Poliza == null || x.FechaInicio == null || x.Cuota == null || errorRow == true) {
-                        if(errorRow == false)
-                            query = $"INSERT INTO RUP_NO_CARGADOS VALUES('Los campos de la llave de sincronización no estan completos.',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
-                        else    
-                            query = $"INSERT INTO RUP_NO_CARGADOS VALUES('{errorDescrip}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
+                    if (x.Sistema == null || x.Poliza == null || x.FechaInicio == null || x.Cuota == null || errorRow == true)
+                    {
+                        if (errorRow == false)
+                            query = $"INSERT INTO RUP_NO_CARGADOS VALUES('Los campos de la llave de sincronización no estan completos LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
+                        else
+                            query = $"INSERT INTO RUP_NO_CARGADOS VALUES('{errorDescrip} LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
                         _baseDatosPolizas.Insert(query);
-                    } else { 
+                    }
+                    else
+                    {
                         var llavesincronizacion = new StringBuilder();
                         llavesincronizacion.Append($"{x.Sistema}");
                         llavesincronizacion.Append($"{x.Poliza}");
@@ -639,7 +706,7 @@ namespace FacturacionCFDI.Negocio.Polizas
 
                         query = $"SELECT * FROM POLIZAS_MOVIMIENTOS WHERE LLAVESINCRONIZACION = '{llavesincronizacion}'";
                         Movimientos row = _baseDatosCliente.SelectFirst<Movimientos>(query);
-                        query = $"SELECT * FROM RUP WHERE SISTEMA = '{x.Sistema}' AND POLIZA = '{x.Poliza}' AND POLIZA = '{x.Poliza}' AND FECHAINICIO = TO_DATE('{x.FechaInicio.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy') AND PRIMANETA = {x.PrimaNeta} AND FINANCIAMIENTO = {x.Financiamiento} AND GASTO = {x.Gasto} AND CUOTA = '{x.Cuota}'";
+                        query = $"SELECT * FROM RUP WHERE SISTEMA = '{x.Sistema}' AND POLIZA = '{x.Poliza}' AND FECHAINICIO = TO_DATE('{x.FechaInicio.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy') AND PRIMANETA = {x.PrimaNeta} AND FINANCIAMIENTO = {x.Financiamiento} AND GASTO = {x.Gasto} AND CUOTA = '{x.Cuota}'";
                         RUP rup = _baseDatosCliente.SelectFirst<RUP>(query);
 
                         var error = 0;
@@ -697,43 +764,30 @@ namespace FacturacionCFDI.Negocio.Polizas
                                     if (string.IsNullOrWhiteSpace(x.Observaciones_Pago)) sbInsert.Append($",'{x.Observaciones_Pago}'"); else sbInsert.Append($",'{x.Observaciones_Pago.Trim()}'");
                                     sbInsert.Append($",'{x.Cajero}'");
                                     sbInsert.Append($",TO_DATE('{x.FechaRecepcion.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'))");
+                                    var insertado = _baseDatosPolizas.Insert(sbInsert.ToString());
+                                    if (insertado == true) { 
+                                        cont++;
+                                    } else {
+                                        _baseDatosPolizas.Insert($"INSERT INTO RUP_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1003)");
+                                    }
                                 }
                                 break;
                             case 999:
                                 {
-                                    query = $"INSERT INTO RUP_NO_CARGADOS VALUES('{llavesincronizacion}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), {error})";
+                                    query = $"INSERT INTO RUP_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), {error})";
                                     _baseDatosPolizas.Insert(query);
                                 }
                                 break;
                             case 1000:
                                 {
-                                    query = $"INSERT INTO RUP_NO_CARGADOS VALUES('{llavesincronizacion}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), {error})";
+                                    query = $"INSERT INTO RUP_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), {error})";
                                     _baseDatosPolizas.Insert(query);
                                 }
                                 break;
                         }
                     }
-                    return new { 
-                        poliza = x.Poliza,
-                        sistema = x.Sistema,
-                        monto = x.MontoAplicado,
-                        queryIns = sbInsert.ToString() 
-                    };
-                }).ToList();
-
-                int cont = 0;
-
-                foreach (var q in querys)
-                {
-                    var insertMov = _baseDatosPolizas.Insert(q.queryIns);
-
-                    if (insertMov){
-                        cont++;
-                    } else {
-                        if (q.queryIns != "")
-                            _baseDatosPolizas.Insert($"INSERT INTO RUP_NO_CARGADOS VALUES('Hubo un error en el registo con Poliza: {q.poliza} - Sistema: {q.sistema} - MontoA: {q.monto}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)");
-                    }
                 }
+
                 if (rup_list.Count == cont){
                     Console.WriteLine($"Sincronización de la tabla de RUP completa, registros obtenenidos {rup_list.Count} - registros guardados {cont}.");
                 } else {
@@ -809,7 +863,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                 var id = _baseDatosPolizas.SelectFirst<int>(QUERY_POLIZAS_LOGMOVIMIENTOS_ID);
 
                 if (id > 0)
-                    _baseDatosPolizas.Insert($"INSERT INTO POLIZAS_LOGMOVIMIENTOS VALUES ({id}, {llave}, SYSDATE, '{mensaje}')");
+                    _baseDatosPolizas.Insert($"INSERT INTO POLIZAS_LOGMOVIMIENTOS VALUES ({id}, '{llave}', SYSDATE, '{mensaje}')");
             }
             catch
             {

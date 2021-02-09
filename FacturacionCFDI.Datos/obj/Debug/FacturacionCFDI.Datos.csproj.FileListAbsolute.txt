@@ -24,3 +24,10 @@ C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Da
 C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.csproj.CoreCompileInputs.cache
 C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.dll
 C:\xampp\htdocs\algunproyecto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.pdb
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Datos\bin\Debug\FacturacionCFDI.Datos.dll.config
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Datos\bin\Debug\FacturacionCFDI.Datos.dll
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Datos\bin\Debug\FacturacionCFDI.Datos.pdb
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.csprojAssemblyReference.cache
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.csproj.CoreCompileInputs.cache
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.dll
+C:\xampp\htdocs\PSFAuto\FacturacionCFDI.Datos\obj\Debug\FacturacionCFDI.Datos.pdb
