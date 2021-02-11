@@ -146,7 +146,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                 int count = 0;
                 int count2 = 0;
                 bool rfcError = true;
-                
+
                 do {
                     bool repeat = true;
                     do
@@ -224,8 +224,11 @@ namespace FacturacionCFDI.Negocio.Polizas
                         foreach (var x in rows)
                         {
                             int idReceptor = _baseDatos.SelectFirst<int>($"SELECT RECEPTORID FROM FACTURACION_COMPROBANTE WHERE ID = {x.ComprobanteId}");
-                            string receptor = _baseDatos.SelectFirst<string>($"SELECT NOMBRE FROM FACTURACION_RECEPTOR WHERE ID = {idReceptor}");
-                            _baseDatos.Update($"UPDATE FACTURACION_COMPROBANTE SET RECEPTORNOMBREGENERICO = '{receptor}', RECEPTORID = 1, ESTATUSFACTURAID = 1 WHERE ID = {x.ComprobanteId}");
+                            if (idReceptor != 1)
+                            {
+                                string receptor = _baseDatos.SelectFirst<string>($"SELECT NOMBRE FROM FACTURACION_RECEPTOR WHERE ID = {idReceptor}");
+                                var jala = _baseDatos.Update($@"UPDATE FACTURACION_COMPROBANTE SET RECEPTORNOMBREGENERICO = '{receptor}', RECEPTORID = 1, ESTATUSFACTURAID = 1 WHERE ID = {x.ComprobanteId}");
+                            }
                             count--;
                         }
                     } else {

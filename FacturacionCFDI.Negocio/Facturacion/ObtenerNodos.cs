@@ -633,7 +633,10 @@ namespace FacturacionCFDI.Negocio.Facturacion
                         var pago = new PagosPago();
 
                         pago.FechaPago = dato.fechaPago.ToString("yyyy-MM-ddTHH:mm:ss");
-                        pago.FormaDePagoP = String.Format("{0:00}", Int32.Parse(dato.formaDePagoP));
+                        if(dato.formaDePagoP == "1" || dato.formaDePagoP == "2" || dato.formaDePagoP == "3" || dato.formaDePagoP == "4" || dato.formaDePagoP == "28")
+                            pago.FormaDePagoP = String.Format("{0:00}", Int32.Parse(dato.formaDePagoP));
+                        else
+                            pago.FormaDePagoP = String.Format("{0:00}", Int32.Parse("3"));
                         pago.MonedaP = dato.monedaP;
                         if (dato.monedaP != "MXN")
                         {

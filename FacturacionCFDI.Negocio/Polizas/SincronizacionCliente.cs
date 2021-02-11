@@ -351,21 +351,21 @@ namespace FacturacionCFDI.Negocio.Polizas
                         llavesincronizacion.Append($"{txt_prima}");
 
                         query = $"SELECT * FROM POLIZAS_MOVIMIENTOS WHERE LLAVESINCRONIZACION = '{llavesincronizacion}'";
-                        Movimientos row = _baseDatosCliente.SelectFirst<Movimientos>(query);
+                        Movimientos row = _baseDatosPolizas.SelectFirst<Movimientos>(query);
 
                         query = $"SELECT * FROM RUE WHERE SISTEMA = '{x.Sistema}' AND POLIZA = '{x.Poliza}' AND FECHAINICIO = TO_DATE('{x.FechaInicio.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy') AND PRIMANETA = {x.PrimaNeta} AND FINANCIAMIENTO = {x.Financiamiento} AND GASTO = {x.Gasto} AND CAUSAENDOSO = '{x.CausaEndoso}'";
-                        RUE rue = _baseDatosCliente.SelectFirst<RUE>(query);
+                        RUE rue = _baseDatosPolizas.SelectFirst<RUE>(query);
 
                         var error = 0;
                         if (causaEndoso == "ENDOSO" || causaEndoso == "MOD 527" || causaEndoso == "MNC 52 / MNA 52" || causaEndoso == "MFC 53 / MNC 53")
                         {
                             error = 998;
                             query = $"SELECT * FROM POLIZAS_CONCENTRADO WHERE SISTEMA = '{x.Sistema}' AND POLIZA = '{x.Poliza}' AND ANIOINICIO = '{x.FechaInicio.ToString("yyyy")}'";
-                            Concentrado concen = _baseDatosCliente.SelectFirst<Concentrado>(query);
+                            Concentrado concen = _baseDatosPolizas.SelectFirst<Concentrado>(query);
                             if (concen != null)
                             {
                                 query = $"SELECT * FROM POLIZAS_FACTURACION WHERE POLIZASID = {concen.Id}";
-                                DboFacturacion fac = _baseDatosCliente.SelectFirst<DboFacturacion>(query);
+                                DboFacturacion fac = _baseDatosPolizas.SelectFirst<DboFacturacion>(query);
                                 if (fac != null)
                                 {
                                     if (fac.RfcReceptor != x.Rfc_Cont || fac.NombreReceptor != x.Contratante || fac.PrimaNeta != x.PrimaNeta)
@@ -705,9 +705,9 @@ namespace FacturacionCFDI.Negocio.Polizas
                         llavesincronizacion.Append($"{txt_prima}");
 
                         query = $"SELECT * FROM POLIZAS_MOVIMIENTOS WHERE LLAVESINCRONIZACION = '{llavesincronizacion}'";
-                        Movimientos row = _baseDatosCliente.SelectFirst<Movimientos>(query);
+                        Movimientos row = _baseDatosPolizas.SelectFirst<Movimientos>(query);
                         query = $"SELECT * FROM RUP WHERE SISTEMA = '{x.Sistema}' AND POLIZA = '{x.Poliza}' AND FECHAINICIO = TO_DATE('{x.FechaInicio.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy') AND PRIMANETA = {x.PrimaNeta} AND FINANCIAMIENTO = {x.Financiamiento} AND GASTO = {x.Gasto} AND CUOTA = '{x.Cuota}'";
-                        RUP rup = _baseDatosCliente.SelectFirst<RUP>(query);
+                        RUP rup = _baseDatosPolizas.SelectFirst<RUP>(query);
 
                         var error = 0;
                         if (prima == 0)

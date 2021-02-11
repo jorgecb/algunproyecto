@@ -36,7 +36,7 @@ namespace ProyectoConsumidorPolizas
                 Console.WriteLine("[9] Actualizar estatus facturas - Programados a Por procesar");
                 Console.WriteLine("[10] Actualizar estatus facturas - Factura global por timbrar a Por procesar");
                 Console.WriteLine("[11] Salir");
-                
+
                 Console.WriteLine("Ingresa opción:");
                 captura = Console.ReadLine();
 
