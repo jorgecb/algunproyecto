@@ -60,7 +60,7 @@ namespace FacturacionCFDI.Negocio.Polizas
         /// Proceso para Sincronizar POLIZAS_FACTURACION a Tablas de FACTURACION
         /// </summary>
         /// <returns></returns>
-        public async Task ProcesoSincronizarTablasFacturacion()
+        public async Task ProcesoSincronizarTablasFacturacion(string tipo)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                 var procesoRfc = await _facturacion.SincronizarFacturasReceptor();
                 if (procesoRfc.Codigo != 0)
                 {
-                    var procesoFact = await _facturacion.SincronizarFacturas();
+                    var procesoFact = await _facturacion.SincronizarFacturas(tipo);
                     if (procesoFact != null)
                     {
                         Console.WriteLine($"Código: {procesoFact.Codigo}; Mensaje: {procesoFact.Mensaje}");

@@ -24,7 +24,7 @@ namespace FacturacionCFDI.Negocio.Polizas
         private const string IDENTIFICADOR_TABLA_QUERY = "@TABLA";
         private const string QUERY_POLIZAS_LOGMOVIMIENTOS_ID = "SELECT nvl(MAX(ID) + 1, 1) FROM polizas_logmovimientos";
         private const string QUERY_CLIENTE_RUE = "SELECT 'RUE' AS datoorigen, 'I' AS tiposolicitud, CASE WHEN TRIM(causaendoso) = 'REN 401' THEN 'I' WHEN TRIM(causaendoso) = 'MOE 505 / PON 505' THEN 'I' WHEN TRIM(causaendoso) = 'MOE 504 / PON 504' THEN 'I' WHEN TRIM(causaendoso) = 'PON 474' THEN 'I' WHEN TRIM(causaendoso) = 'PON 475' THEN 'I' WHEN TRIM(causaendoso) = 'REN 290' THEN 'I' WHEN TRIM(causaendoso) = 'REN 525' THEN 'I' WHEN TRIM(causaendoso) = 'REN 69' THEN 'I' WHEN TRIM(causaendoso) = 'REN 42' THEN 'I' WHEN TRIM(causaendoso) = 'REN 70' THEN 'I' WHEN TRIM(causaendoso) = 'REN 86' THEN 'I' WHEN TRIM(causaendoso) = 'EMI' THEN 'I' WHEN TRIM(causaendoso) = 'REH 37' THEN 'E' WHEN TRIM(causaendoso) = 'REA 148' THEN 'E' WHEN TRIM(causaendoso) = 'REHABI' THEN 'E' WHEN TRIM(causaendoso) = 'REH' THEN 'E' WHEN TRIM(causaendoso) = 'CFP 54' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) > 0 THEN 'I' WHEN TRIM(causaendoso) = 'CFP 54' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) < 0 THEN 'E' WHEN TRIM(causaendoso) = 'CAP 55' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) > 0 THEN 'I' WHEN TRIM(causaendoso) = 'CAP 55' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) < 0 THEN 'E' WHEN TRIM(causaendoso) = 'CAP 155' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) > 0 THEN 'I' WHEN TRIM(causaendoso) = 'CAP 155' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) < 0 THEN 'E' WHEN TRIM(causaendoso) = 'REC 63' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) > 0 THEN 'I' WHEN TRIM(causaendoso) = 'REC 63' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) < 0 THEN 'E' WHEN TRIM(causaendoso) = 'MOE 184' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) > 0 THEN 'I' WHEN TRIM(causaendoso) = 'MOE 184' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) < 0 THEN 'E' WHEN TRIM(causaendoso) = 'REI 482' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) > 0 THEN 'I' WHEN TRIM(causaendoso) = 'REI 482' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) < 0 THEN 'E' WHEN TRIM(causaendoso) = 'REI 145' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) > 0 THEN 'I' WHEN TRIM(causaendoso) = 'REI 145' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) < 0 THEN 'E' WHEN TRIM(causaendoso) = 'MOE 184' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) > 0 THEN 'I' WHEN TRIM(causaendoso) = 'MOE 184' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) < 0 THEN 'E' WHEN TRIM(causaendoso) = 'AJU XXX' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) > 0 THEN 'I' WHEN TRIM(causaendoso) = 'AJU XXX' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) < 0 THEN 'E' WHEN TRIM(causaendoso) = 'ANULAC' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) > 0 THEN 'I' WHEN TRIM(causaendoso) = 'ANULAC' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) < 0 THEN 'E' WHEN TRIM(causaendoso) = 'MOD 57' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) > 0 THEN 'I' WHEN TRIM(causaendoso) = 'MOD 57' AND round((SUM(NVL(primaneta,0)) + SUM(NVL(financiamiento,0)) + SUM(NVL(gasto,0))) * 1.16, 2) < 0 THEN 'E' WHEN TRIM(causaendoso) = 'BAJ 187' THEN 'E' WHEN TRIM(causaendoso) = 'CSC 38' THEN 'E' WHEN TRIM(causaendoso) = 'CNP 38' THEN 'E' WHEN TRIM(causaendoso) = 'DEV 40' THEN 'E' WHEN TRIM(causaendoso) = 'CYR 38' THEN 'E' WHEN TRIM(causaendoso) = 'SUS XXX' THEN 'E' WHEN TRIM(causaendoso) = 'ENDDIS' THEN 'E' WHEN TRIM(causaendoso) = 'BAJ' THEN 'E' WHEN TRIM(causaendoso) = 'CANMAN' THEN 'E' WHEN TRIM(causaendoso) = 'CANAUT' THEN 'E' WHEN TRIM(causaendoso) = 'CANMAN' THEN 'E' WHEN TRIM(causaendoso) = 'CANAUT' THEN 'E' WHEN TRIM(causaendoso) = 'ALT 457' THEN 'I' WHEN TRIM(causaendoso) = 'ALT 48' THEN 'I' WHEN TRIM(causaendoso) = 'ALT 458' THEN 'I' WHEN TRIM(causaendoso) = 'ALT 49' THEN 'I' WHEN TRIM(causaendoso) = 'ALT 480' THEN 'I' WHEN TRIM(causaendoso) = 'ALT 478' THEN 'I' WHEN TRIM(causaendoso) = 'ALT 477' THEN 'I' WHEN TRIM(causaendoso) = 'ALT 476' THEN 'I' WHEN TRIM(causaendoso) = 'ALT 489 / PON 489' THEN 'I' WHEN TRIM(causaendoso) = 'ALT 493 / PON 489' THEN 'I' WHEN TRIM(causaendoso) = 'ENDAJU' THEN 'I' WHEN TRIM(causaendoso) = 'ALT' THEN 'I' WHEN TRIM(causaendoso) = 'ENDOSO' THEN 'R' WHEN TRIM(causaendoso) = 'MOD 527' THEN 'R' WHEN TRIM(causaendoso) = 'MNC 52 / MNA 52' THEN 'R' WHEN TRIM(causaendoso) = 'MFC 53 / MNC 53' THEN 'R' END AS tipomovimiento, TRIM(sistema) AS sistema, TRIM(poliza) AS poliza, fechaemision AS fechaemision, fechainicio AS fechainicio, fechatermino AS fechatermino, TRIM(causaendoso) AS causaendoso, TRIM(estatuspoliza) AS estatuspoliza, TRIM(subramo) AS tipodepoliza, TRIM(rfc_cont) AS rfccontratante, TRIM(contratante) AS nombrecontratante, TRIM(tipopersona_cont) AS tipopersonacontratante, '' AS rfcasegurado, '' AS nombreasegurado, '' AS tipopersonaasegurado, '' AS pagorfc, '' AS pagonombre, '' AS pagotipopersona, '' AS pagofechapago, '' AS pagoformapago, '' AS pagometodopago, '' AS pagoparcialidad, '' AS pagooperacion, '' AS uuidfactura, TRIM(cod_producto) AS codigoproducto, TRIM(cod_formapago) AS formapago, '' AS lugarexpedicion, TRIM(cod_ramocnsf) AS codigoconcepto, round(SUM(NVL(primaneta,0)),2) AS primaneta, round(SUM(NVL(financiamiento,0)),2) AS financiamiento, round(SUM(NVL(gasto,0)),2) AS gasto, round((round(SUM(NVL(primaneta,0)),2) + round(SUM(NVL(financiamiento,0)),2) + round(SUM(NVL(gasto,0)),2)) *.16, 2) AS iva, round((round(SUM(NVL(primaneta,0)),2) + round(SUM(NVL(financiamiento,0)),2) + round(SUM(NVL(gasto,0)),2)) * 1.16, 2) AS total, sysdate AS fechacreacion, sysdate AS fechamodificacion, 1 AS estatusmovimientoid, 'servicio' AS solicitante, TRIM(sistema) || TRIM(poliza) || to_char(fechainicio, 'YYYY') || replace(causaendoso, ' ', '') || CAST(round((round(SUM(NVL(primaneta,0)),2) + round(SUM(NVL(financiamiento,0)),2) + round(SUM(NVL(gasto,0)),2)) * 1.16, 2) AS VARCHAR(30)) AS llavesincronizacion FROM RUE WHERE TRIM(causaendoso) IN( 'REN 401', 'MOE 505 / PON 505', 'MOE 504 / PON 504', 'PON 474', 'PON 475', 'REN 290', 'REN 525', 'REN 69', 'REN 42', 'REN 70', 'REN 86', 'EMI', 'REH 37', 'REA 148', 'REHABI', 'REH', 'CFP 54', 'CAP 55', 'CAP 155', 'REC 63', 'MOE 184', 'REI 482', 'REI 145', 'MOE 184', 'AJU XXX', 'ANULAC', 'BAJ 187', 'CSC 38', 'CNP 38', 'DEV 40', 'CYR 38', 'SUS XXX', 'ENDDIS', 'BAJ', 'MOD 57', 'ALT 457', 'ALT 48', 'ALT 458', 'ALT 49', 'ALT 480', 'ALT 478', 'ALT 477', 'ALT 476', 'ALT 489 / PON 489', 'ALT 493 / PON 489', 'ENDAJU', 'ALT', 'ENDOSO', 'MOD 527', 'MNC 52 / MNA 52', 'MFC 53 / MNC 53', 'CANMAN', 'CANAUT', 'CANMAN', 'CANAUT') AND estatuspoliza = 'VIGENTE' GROUP BY TRIM(causaendoso), 'RUE', causaendoso, 'I', sistema, TRIM(poliza), poliza, fechaemision, fechainicio, fechatermino, TRIM(estatuspoliza), estatuspoliza, TRIM(subramo), subramo, TRIM(rfc_cont), rfc_cont, TRIM(contratante), contratante, TRIM(tipopersona_cont), tipopersona_cont, TRIM(cod_producto), cod_producto, TRIM(cod_formapago), cod_formapago, TRIM(cod_ramocnsf), cod_ramocnsf, TRIM(sistema), '', sysdate, 1, 'servicio'";
-        private const string QUERY_CLIENTE_RUP = "SELECT 'RUP' AS datoorigen, 'I' AS tiposolicitud, 'P' AS tipomovimiento, TRIM(sistema) AS sistema, TRIM(poliza) AS poliza, NULL AS fechaemision, fechainicio AS fechainicio, fechatermino AS fechatermino, NULL AS causaendoso, NULL AS estatuspoliza, TRIM(subramo) AS tipodepoliza, '' AS rfccontratante, '' AS nombrecontratante, '' AS tipopersonacontratante, '' AS rfcasegurado, '' AS nombreasegurado, '' AS tipopersonaasegurado, TRIM(rfc) AS pagorfc, TRIM(contratante) AS pagonombre, TRIM(tipo_persona) AS pagotipopersona, fechapago AS pagofechapago, TRIM(cod_formapago) AS pagoformapago, TRIM(cod_metodopago) AS pagometodopago, TRIM(cuota) AS pagoparcialidad, TRIM(id_pago) AS pagooperacion, '' AS uuidfactura, '' AS codigoproducto, '' AS formapago, '' AS lugarexpedicion, TRIM(cod_ramo) AS codigoconcepto, round(SUM(NVL(primaneta,0)),2) AS primaneta, round(SUM(NVL(financiamiento,0)),2) AS financiamiento, round(SUM(NVL(gasto,0)),2) AS gasto, round((round(SUM(NVL(primaneta,0)),2) + round(SUM(NVL(financiamiento,0)),2) + round(SUM(NVL(gasto,0)),2)) *.16, 2) AS iva, round((round(SUM(NVL(primaneta,0)),2) + round(SUM(NVL(financiamiento,0)),2) + round(SUM(NVL(gasto,0)),2)) * 1.16, 2) AS total, sysdate AS fechacreacion, sysdate AS fechamodificacion, 1 AS estatusmovimientoid, 'servicio' AS solicitante, TRIM(sistema) || TRIM(poliza) || to_char(fechainicio, 'YYYY') || 'PAGO' || TRIM(cuota) || CAST(round((round(SUM(NVL(primaneta,0)),2) + round(SUM(NVL(financiamiento,0)),2) + round(SUM(NVL(gasto,0)),2)) * 1.16, 2) AS VARCHAR(30)) AS llavesincronizacion FROM RUP GROUP BY TRIM(sistema), TRIM(poliza), fechainicio, fechatermino, TRIM(subramo), TRIM(rfc), TRIM(contratante), TRIM(tipo_persona), fechapago, TRIM(cod_formapago), TRIM(cod_metodopago), TRIM(cuota), TRIM(id_pago), TRIM(cod_ramo)";
+        private const string QUERY_CLIENTE_RUP = "SELECT 'RUP' AS datoorigen, 'I' AS tiposolicitud, 'P' AS tipomovimiento, TRIM(sistema) AS sistema, TRIM(poliza) AS poliza, NULL AS fechaemision, fechainicio AS fechainicio, fechatermino AS fechatermino, NULL AS causaendoso, NULL AS estatuspoliza, TRIM(subramo) AS tipodepoliza, '' AS rfccontratante, '' AS nombrecontratante, '' AS tipopersonacontratante, '' AS rfcasegurado, '' AS nombreasegurado, '' AS tipopersonaasegurado, TRIM(rfc) AS pagorfc, TRIM(contratante) AS pagonombre, TRIM(tipo_persona) AS pagotipopersona, fechapago AS pagofechapago, TRIM(cod_formapago) AS pagoformapago, TRIM(cod_metodopago) AS pagometodopago, TRIM(cuota) AS pagoparcialidad, TRIM(id_pago) AS pagooperacion, '' AS uuidfactura, '' AS codigoproducto, '' AS formapago, '' AS lugarexpedicion, TRIM(cod_ramo) AS codigoconcepto, round(SUM(NVL(primaneta,0)),2) AS primaneta, round(SUM(NVL(financiamiento,0)),2) AS financiamiento, round(SUM(NVL(gasto,0)),2) AS gasto, round((round(SUM(NVL(primaneta,0)),2) + round(SUM(NVL(financiamiento,0)),2) + round(SUM(NVL(gasto,0)),2)) *.16, 2) AS iva, round((round(SUM(NVL(primaneta,0)),2) + round(SUM(NVL(financiamiento,0)),2) + round(SUM(NVL(gasto,0)),2)) * 1.16, 2) AS total, sysdate AS fechacreacion, sysdate AS fechamodificacion, 1 AS estatusmovimientoid, 'servicio' AS solicitante, to_char(fechapago, 'DD') || to_char(fechapago, 'MM') || TRIM(sistema) || TRIM(poliza) || to_char(fechainicio, 'YYYY') || 'PAGO' || TRIM(cuota) || CAST(round((round(SUM(NVL(primaneta,0)),2) + round(SUM(NVL(financiamiento,0)),2) + round(SUM(NVL(gasto,0)),2)) * 1.16, 2) AS VARCHAR(50)) AS llavesincronizacion FROM RUP GROUP BY TRIM(sistema), TRIM(poliza), fechainicio, fechatermino, TRIM(subramo), TRIM(rfc), TRIM(contratante), TRIM(tipo_persona), fechapago, TRIM(cod_formapago), TRIM(cod_metodopago), TRIM(cuota), TRIM(id_pago), TRIM(cod_ramo)";
         private const string QUERY_POLIZAS_MOVIMIENTOS = "SELECT llavesincronizacion FROM polizas_movimientos WHERE datoorigen = '@TABLA' GROUP BY llavesincronizacion";
 
 
@@ -50,7 +50,7 @@ namespace FacturacionCFDI.Negocio.Polizas
             string query;
             try
             {
-                var rue = SincronizacionTablaRue();
+                /*var rue = SincronizacionTablaRue();
                 if (rue == false) {
                     return new GenericResponse()
                     {
@@ -68,7 +68,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                         Mensaje = "Hubo un error en el RUP.",
                         Data = false
                     };
-                }
+                }*/
                 var modelo = await ObtenerMovimientosCliente();
                 //var modelo = await _baseDatosCliente.SelectAsync<Movimientos>(QUERY_CLIENTE_RUE);
 
@@ -159,7 +159,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                         cont++;
                         idMovimiento++;
                     } else {
-                        LogMovimientos(x.LlaveSincronizacion, $"Hubo un error para insertar a movimientos");
+                        LogMovimientos(x.LlaveSincronizacion, $"Hubo un error para insertar a movimientos", sbInsert.ToString());
                     }
                     count2++;
                 }
@@ -245,12 +245,12 @@ namespace FacturacionCFDI.Negocio.Polizas
                 List<RUE> rue_list_anterior, rue_list_actual;
                 List<RUE> rue_list = null;
 
-                query = $"SELECT * FROM OSIRIS.{tabla_actual}";
+                query = $"SELECT * FROM {tabla_actual}";
                 rue_list_actual = _baseDatosCliente.Select<RUE>(query);
 
                 if (dia <= 15)
                 {
-                    query = $"SELECT * FROM OSIRIS.{tabla_anterior}";
+                    query = $"SELECT * FROM {tabla_anterior}";
                     rue_list_anterior = _baseDatosCliente.Select<RUE>(query);
                     if (rue_list_actual == null){
                         if(rue_list_anterior != null)
@@ -311,9 +311,9 @@ namespace FacturacionCFDI.Negocio.Polizas
                     if (x.Sistema == null || x.Poliza == null || x.FechaInicio == null || x.CausaEndoso == null || errorRow == true)
                     {
                         if (errorRow == false)
-                            query = $@"INSERT INTO RUE_NO_CARGADOS VALUES('Los campos de la llave de sincronización no estan completos LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
+                            query = $@"INSERT INTO RUE_NO_CARGADOS VALUES('Los campos de la llave de sincronización no estan completos LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002, 'NO HAY QUERY')";
                         else
-                            query = $@"INSERT INTO RUE_NO_CARGADOS VALUES('{errorDescrip} LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
+                            query = $@"INSERT INTO RUE_NO_CARGADOS VALUES('{errorDescrip} LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002, 'NO HAY QUERY')";
                         
                         var jala = _baseDatosPolizas.Insert(query);
                         if (jala == false) {
@@ -528,7 +528,9 @@ namespace FacturacionCFDI.Negocio.Polizas
                                     if (insertado == true) {
                                         cont++;
                                     } else {
-                                        query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1003)";
+                                        query = sbInsert.ToString();
+                                        string aux = query.Replace("'","''");
+                                        query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1003, '{aux}')";
                                         var jala = _baseDatosPolizas.Insert(query);
                                         if (jala == false)
                                         {
@@ -539,7 +541,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                 break;
                             case 998:
                                 {
-                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
+                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error}, 'NO HAY QUERY')";
                                     var jala = _baseDatosPolizas.Insert(query);
                                     if (jala == false)
                                     {
@@ -549,7 +551,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                 break;
                             case 999:
                                 {
-                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
+                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error}, 'NO HAY QUERY')";
                                     var jala = _baseDatosPolizas.Insert(query);
                                     if (jala == false)
                                     {
@@ -559,7 +561,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                 break;
                             case 1000:
                                 {
-                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
+                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error}, 'NO HAY QUERY')";
                                     var jala = _baseDatosPolizas.Insert(query);
                                     if (jala == false)
                                     {
@@ -569,7 +571,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                 break;
                             case 1001:
                                 {
-                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error})";
+                                    query = $"INSERT INTO RUE_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'),{error}, 'NO HAY QUERY')";
                                     var jala = _baseDatosPolizas.Insert(query);
                                     if (jala == false)
                                     {
@@ -617,12 +619,12 @@ namespace FacturacionCFDI.Negocio.Polizas
                 List<RUP> rup_list_anterior, rup_list_actual;
                 List<RUP> rup_list = null;
 
-                query = $"SELECT * FROM OSIRIS.{tabla_actual}";
+                query = $"SELECT * FROM {tabla_actual}";
                 rup_list_actual = _baseDatosCliente.Select<RUP>(query);
 
                 if (dia <= 15)
                 {
-                    query = $"SELECT * FROM OSIRIS.{tabla_anterior}";
+                    query = $"SELECT * FROM {tabla_anterior}";
                     rup_list_anterior = _baseDatosCliente.Select<RUP>(query);
                     if (rup_list_actual == null)
                     {
@@ -653,7 +655,6 @@ namespace FacturacionCFDI.Negocio.Polizas
                     Console.WriteLine($"Obtuvo la lista de {tabla_actual} --- Count: " + rup_list.Count());
                 }
 
-                Console.WriteLine("Obtuvo la lista de RUP - Count: " + rup_list.Count());
                 // SISTEMA - POLIZA - AÑO/INICIO - ENDOSO - MONTO
                 int cont = 0;
 
@@ -679,9 +680,9 @@ namespace FacturacionCFDI.Negocio.Polizas
                     if (x.Sistema == null || x.Poliza == null || x.FechaInicio == null || x.Cuota == null || errorRow == true)
                     {
                         if (errorRow == false)
-                            query = $"INSERT INTO RUP_NO_CARGADOS VALUES('Los campos de la llave de sincronización no estan completos LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
+                            query = $"INSERT INTO RUP_NO_CARGADOS VALUES('Los campos de la llave de sincronización no estan completos LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002, 'NO HAY QUERY')";
                         else
-                            query = $"INSERT INTO RUP_NO_CARGADOS VALUES('{errorDescrip} LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002)";
+                            query = $"INSERT INTO RUP_NO_CARGADOS VALUES('{errorDescrip} LLAVE: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1002, 'NO HAY QUERY')";
                         _baseDatosPolizas.Insert(query);
                     }
                     else
@@ -768,19 +769,21 @@ namespace FacturacionCFDI.Negocio.Polizas
                                     if (insertado == true) { 
                                         cont++;
                                     } else {
-                                        _baseDatosPolizas.Insert($"INSERT INTO RUP_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1003)");
+                                        query = sbInsert.ToString();
+                                        string aux = query.Replace("'", "''");
+                                        _baseDatosPolizas.Insert($"INSERT INTO RUP_NO_CARGADOS VALUES('Hubo un error al momento de guardar el registo, su llave es: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), 1003, '{aux}')");
                                     }
                                 }
                                 break;
                             case 999:
                                 {
-                                    query = $"INSERT INTO RUP_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), {error})";
+                                    query = $"INSERT INTO RUP_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), {error}, 'NO HAY QUERY')";
                                     _baseDatosPolizas.Insert(query);
                                 }
                                 break;
                             case 1000:
                                 {
-                                    query = $"INSERT INTO RUP_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), {error})";
+                                    query = $"INSERT INTO RUP_NO_CARGADOS VALUES('Hubo un error en el registo con: {llave}',TO_DATE('{mesActual.ToString("dd/MM/yyyy")}', 'dd/mm/yyyy'), {error}, 'NO HAY QUERY')";
                                     _baseDatosPolizas.Insert(query);
                                 }
                                 break;
@@ -856,14 +859,14 @@ namespace FacturacionCFDI.Negocio.Polizas
         /// <param name="facturaId">ID Tabla POLIZAS_MOVIMIENTO</param>
         /// <param name="mensaje">Mensaje</param>
         /// <returns></returns>
-        private async Task LogMovimientos(string llave, string mensaje)
+        private async Task LogMovimientos(string llave, string mensaje, string query)
         {
             try
             {
                 var id = _baseDatosPolizas.SelectFirst<int>(QUERY_POLIZAS_LOGMOVIMIENTOS_ID);
-
+                string query2 = query.Replace("'","''");
                 if (id > 0)
-                    _baseDatosPolizas.Insert($"INSERT INTO POLIZAS_LOGMOVIMIENTOS VALUES ({id}, '{llave}', SYSDATE, '{mensaje}')");
+                    _baseDatosPolizas.Insert($"INSERT INTO POLIZAS_LOGMOVIMIENTOS VALUES ({id}, '{llave}', SYSDATE, '{mensaje}', '{query2}')");
             }
             catch
             {

@@ -28,7 +28,7 @@ namespace FacturacionCFDI.Negocio.Polizas
         private const string QUERY_POLIZAS_LOGFACTURACION_ID = "SELECT nvl(MAX(ID) + 1, 1) FROM polizas_logfacturacion";
         private const string QUERY_ESTATUSFACTURACION = "SELECT c.ID as ID, f.ID as FACTURACIONID,  c.ESTATUSFACTURAID as ESTATUSFACTURACIONID FROM FACTURACION_COMPROBANTE c INNER JOIN POLIZAS_FACTURACION f ON c.ID = f.COMPROBANTEID  WHERE c.ESTATUSFACTURAID IN (2, 99) AND f.ESTATUSFACTURACIONID = 7";
         private const string QUERY_ESTATUSFACTURACIONPROGRAMADOS = "SELECT polizasid AS id, id AS facturacionid, 1 AS estatusfacturacionid FROM polizas_facturacion WHERE estatusfacturacionid = 6 AND trunc(fechacomprobante) <= trunc(sysdate)";
-        private const string QUERY_ESTATUSFACTURACIONPORTIMBRARFACTURAGLOBAL = "SELECT pf.POLIZASID as Id, pf.ID as FacturacionId, 1 as EstatusFacturacionId FROM POLIZAS_FACTURACION pf INNER JOIN POLIZAS_CONCENTRADO pc ON pf.POLIZASID  = pc.ID INNER JOIN POLIZAS_FACTURACION pfp ON pc.ID = pfp.POLIZASID AND pfp.POLIZAMADRE = 1 and pfp.ESTATUSFACTURACIONID = 2 WHERE pf.ESTATUSFACTURACIONID = 8 AND pf.FECHACOMPROBANTE <= SYSDATE";
+        private const string QUERY_ESTATUSFACTURACIONPORTIMBRARFACTURAGLOBAL = "SELECT pf.POLIZASID as Id, pf.ID as FacturacionId, 1 as EstatusFacturacionId FROM POLIZAS_FACTURACION pf INNER JOIN POLIZAS_CONCENTRADO pc ON pf.POLIZASID  = pc.ID INNER JOIN POLIZAS_FACTURACION pfp ON pc.ID = pfp.POLIZASID AND pfp.POLIZAMADRE = 1 and pfp.ESTATUSFACTURACIONID = 2 WHERE pf.ESTATUSFACTURACIONID = 8 AND pf.FECHACOMPROBANTE <= SYSDATE AND pf.TIPOCOMPROBANTE = 'P' AND pf.ID > 627303";
         //private const string QUERY_ESTATUSFACTURACIONPORTIMBRARFACTURAGLOBAL = "SELECT pf.POLIZASID as Id, pf.ID as FacturacionId, 1 as EstatusFacturacionId FROM POLIZAS_FACTURACION pf INNER JOIN POLIZAS_CONCENTRADO pc ON pf.POLIZASID  = pc.ID INNER JOIN POLIZAS_FACTURACION pfp ON pc.ID = pfp.POLIZASID AND pfp.POLIZAMADRE = 1 AND pfp.MOVIMIENTOSID is not null and pfp.ESTATUSFACTURACIONID = 2 WHERE pf.ESTATUSFACTURACIONID = 8";
 
         private const string QUERY_PARAMETRO = "SELECT * FROM PARAMETRO WHERE ID = 17";
@@ -164,7 +164,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                 
                                 queryDelConcentrado = $@"DELETE POLIZAS_CONCENTRADO WHERE ID = {idConcentrado}";
                             } else {
-                                LogFacturacion(x.Id, $"Ya existia en concentrado");
+                                LogFacturacion(x.Id, $"Ya existia en concentrado", "");
                             }
                             Console.WriteLine($"Entre por poliza parametrizada ID_MOVIMIENTO: {x.Id}");
                         } else if (polizaParametrizada == false) {
@@ -202,7 +202,7 @@ namespace FacturacionCFDI.Negocio.Polizas
 
                                 queryDelConcentrado = $@"DELETE POLIZAS_CONCENTRADO WHERE ID = {idConcentrado}";
                             } else {
-                                LogFacturacion(x.Id, $"Ya existia en concentrado");
+                                LogFacturacion(x.Id, $"Ya existia en concentrado", "");
                             }
 
                             #region Query INSERT POLIZAS_FACTURACION
@@ -215,10 +215,15 @@ namespace FacturacionCFDI.Negocio.Polizas
                                 if (x.FechaInicio > DateTime.Now)
                                     sbInsertFacturacion.Append($",TO_DATE('{x.FechaInicio.ToString("dd/MM/yyyy")} {DateTime.Now.ToString("HH:mm:ss")}', 'dd/mm/yyyy hh24:mi:ss')");
                                 else
-                                    sbInsertFacturacion.Append($",SYSDATE");
+                                    sbInsertFacturacion.Append($",SYSDATE-1");
                                 sbInsertFacturacion.Append($",'PSFACT{x.TipoComprobante}'");
                                 sbInsertFacturacion.Append($",'{FacturacionId.ToString("D10")}'");
-                                sbInsertFacturacion.Append($",'{RfcReceptor}'");
+                                if (ValidarRFC(RfcReceptor))
+                                {
+                                    sbInsertFacturacion.Append($",'{RfcReceptor}'");
+                                } else {
+                                    sbInsertFacturacion.Append($",'XAXX010101000'");
+                                }
                                 sbInsertFacturacion.Append($",'{nombreReceptor}'");
                                 sbInsertFacturacion.Append($",'{x.CodigoConcepto}'");
                                 sbInsertFacturacion.Append($",'{x.CodigoProducto}'");
@@ -240,17 +245,19 @@ namespace FacturacionCFDI.Negocio.Polizas
                                 sbInsertFacturacion.Append($",1");
                                 sbInsertFacturacion.Append($",SYSDATE");
                                 sbInsertFacturacion.Append($",SYSDATE");
-                                if (ValidarRFC(RfcReceptor))
+                                if (x.FechaInicio > DateTime.Now)
+                                    sbInsertFacturacion.Append($",6");
+                                else
+                                    sbInsertFacturacion.Append($",1");
+                                /*if (ValidarRFC(RfcReceptor))
                                 {
                                     if (x.FechaInicio > DateTime.Now)
                                         sbInsertFacturacion.Append($",6");
                                     else
                                         sbInsertFacturacion.Append($",1");
-                                }
-                                else
-                                {
+                                } else {
                                     sbInsertFacturacion.Append($",992");
-                                }
+                                }*/
                                 sbInsertFacturacion.Append($",{x.Id})");
                             #endregion
 
@@ -267,7 +274,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                             if (x.FechaInicio > DateTime.Now)
                                 sbInsertFacturacion.Append($",TO_DATE('{x.FechaInicio.ToString("dd/MM/yyyy")} {DateTime.Now.ToString("HH:mm:ss")}', 'dd/mm/yyyy hh24:mi:ss')");
                             else
-                                sbInsertFacturacion.Append($",SYSDATE");
+                                sbInsertFacturacion.Append($",SYSDATE-1");
                             sbInsertFacturacion.Append($",'PSFACT{x.TipoComprobante}'");
                             sbInsertFacturacion.Append($",'{idFacturacion.ToString("D10")}'");
                             sbInsertFacturacion.Append($",'{x.RfcReceptor}'");
@@ -319,7 +326,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                         Console.WriteLine($"Error query: {sbInsertConcentrado}");
                         Console.WriteLine($"Error query: {queryUpdMovimientosMal}");
                         _baseDatos.Update(queryUpdMovimientosMal);
-                        LogFacturacion(x.Id, $"Error para insertar a Concentrado");
+                        LogFacturacion(x.Id, $"Error para insertar a Concentrado", sbInsertConcentrado.ToString());
                     } else {
                         if (sbInsertConcentrado.ToString() != "")
                             LogConcentrado(ConcentradoId, "Se genera Concentrado de la Póliza");
@@ -331,7 +338,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                             Console.WriteLine($"Error query: {sbInsertFacturacion}");
                             Console.WriteLine($"Error query: {queryUpdMovimientosMal}");
                             _baseDatos.Update(queryUpdMovimientosMal);
-                            LogFacturacion(x.Id, $"Error para insertar a Facturacion");
+                            LogFacturacion(x.Id, $"Error para insertar a Facturacion", sbInsertFacturacion.ToString());
                             if (sbInsertConcentrado.ToString() != "")
                                 _baseDatos.Delete(queryDelConcentrado);
                         }
@@ -342,7 +349,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                             {
                                 Console.WriteLine($"Error query: {queryUpdMovimientosMal}");
                                 _baseDatos.Update(queryUpdMovimientosMal);
-                                LogFacturacion(x.Id, $"Tuvo un error al cambiar el estado de movimientos");
+                                LogFacturacion(x.Id, $"Tuvo un error al cambiar el estado de movimientos", queryUpdMovimientosMal);
                                 var deleteFacturacion = _baseDatos.Delete(queryDelFacturacion);
                                 var deleteConcentrado = _baseDatos.Delete(queryDelConcentrado);
                             }
@@ -702,10 +709,17 @@ namespace FacturacionCFDI.Negocio.Polizas
                     if (x.FechaInicio > DateTime.Now)
                         sbInsertFacturacion.Append($",TO_DATE('{x.FechaInicio.ToString("dd/MM/yyyy")} {DateTime.Now.ToString("HH:mm:ss")}', 'dd/mm/yyyy hh24:mi:ss')");
                     else
-                        sbInsertFacturacion.Append($",SYSDATE");
+                        sbInsertFacturacion.Append($",SYSDATE-1");
                     sbInsertFacturacion.Append($",'PSFACT{x.TipoComprobante}'");
                     sbInsertFacturacion.Append($",'{FacturacionId.ToString("D10")}'");
-                    sbInsertFacturacion.Append($",'{RfcReceptor}'");
+                    if (ValidarRFC(RfcReceptor))
+                    {
+                        sbInsertFacturacion.Append($",'{RfcReceptor}'");
+                    }
+                    else
+                    {
+                        sbInsertFacturacion.Append($",'XAXX010101000'");
+                    }
                     sbInsertFacturacion.Append($",'{nombreReceptor}'");
                     sbInsertFacturacion.Append($",'{x.CodigoConcepto}'");
                     sbInsertFacturacion.Append($",'{x.CodigoProducto}'");
@@ -727,7 +741,13 @@ namespace FacturacionCFDI.Negocio.Polizas
                     sbInsertFacturacion.Append($",0");
                     sbInsertFacturacion.Append($",SYSDATE");
                     sbInsertFacturacion.Append($",SYSDATE");
-                    if (ValidarRFC(RfcReceptor))
+                    if (x.EstatusFacturaMadre != 2)
+                        sbInsertFacturacion.Append($",8");
+                    else if (x.FechaInicio > DateTime.Now)
+                        sbInsertFacturacion.Append($",6");
+                    else
+                        sbInsertFacturacion.Append($",1");
+                    /*if (ValidarRFC(RfcReceptor))
                     {
                         if (x.EstatusFacturaMadre != 2)
                             sbInsertFacturacion.Append($",8");
@@ -739,7 +759,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                     else
                     {
                         sbInsertFacturacion.Append($",992");
-                    }
+                    }*/
                     sbInsertFacturacion.Append($",{x.Id})");
 
                     var queryUpdMovimientos = $@"UPDATE POLIZAS_MOVIMIENTOS SET ESTATUSMOVIMIENTOID = 2 WHERE id = {x.Id}";
@@ -752,7 +772,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                     {
                         Console.WriteLine($"Error query: {sbInsertFacturacion}");
                         _baseDatos.Update(queryUpdMovimientosMal);
-                        LogFacturacion(x.Id, $"Error para insertar a Facturacion");
+                        LogFacturacion(x.Id, $"Error para insertar a Facturacion", sbInsertFacturacion.ToString());
                     }
                     else
                     {
@@ -760,7 +780,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                         if (!updateMovimientos)
                         {
                             Console.WriteLine($"Error query: {queryUpdMovimientos}");
-                            LogFacturacion(x.Id, $"Tuvo un error al cambiar el estado de movimientos");
+                            LogFacturacion(x.Id, $"Tuvo un error al cambiar el estado de movimientos", queryUpdMovimientos);
                             _baseDatos.Update(queryUpdMovimientosMal);
                             _baseDatos.Delete(queryDelFacturacion);
                         }
@@ -984,10 +1004,17 @@ namespace FacturacionCFDI.Negocio.Polizas
                     if (x.FechaInicio > DateTime.Now)
                         sbInsertFacturacion.Append($",TO_DATE('{x.FechaInicio.ToString("dd/MM/yyyy")} {DateTime.Now.ToString("HH:mm:ss")}', 'dd/mm/yyyy hh24:mi:ss')");
                     else
-                        sbInsertFacturacion.Append($",SYSDATE");
+                        sbInsertFacturacion.Append($",SYSDATE-1");
                     sbInsertFacturacion.Append($",'PSFACT{x.TipoComprobante}'");
                     sbInsertFacturacion.Append($",'{FacturacionId.ToString("D10")}'");
-                    sbInsertFacturacion.Append($",'{RfcReceptor}'");
+                    if (ValidarRFC(RfcReceptor))
+                    {
+                        sbInsertFacturacion.Append($",'{RfcReceptor}'");
+                    }
+                    else
+                    {
+                        sbInsertFacturacion.Append($",'XAXX010101000'");
+                    }
                     sbInsertFacturacion.Append($",'{nombreReceptor}'");
                     sbInsertFacturacion.Append($",'{x.CodigoConcepto}'");
                     sbInsertFacturacion.Append($",'{x.CodigoProducto}'");
@@ -1009,7 +1036,13 @@ namespace FacturacionCFDI.Negocio.Polizas
                     sbInsertFacturacion.Append($",0");
                     sbInsertFacturacion.Append($",SYSDATE");
                     sbInsertFacturacion.Append($",SYSDATE");
-                    if (ValidarRFC(RfcReceptor))
+                    if (x.EstatusFacturaMadre != 2)
+                        sbInsertFacturacion.Append($",8");
+                    else if (x.FechaInicio > DateTime.Now)
+                        sbInsertFacturacion.Append($",6");
+                    else
+                        sbInsertFacturacion.Append($",1");
+                    /*if (ValidarRFC(RfcReceptor))
                     {
                         if (x.EstatusFacturaMadre != 2)
                             sbInsertFacturacion.Append($",8");
@@ -1021,7 +1054,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                     else
                     {
                         sbInsertFacturacion.Append($",992");
-                    }
+                    }*/
                     sbInsertFacturacion.Append($",{x.Id})");
 
                     var queryUpdMovimientos = $@"UPDATE POLIZAS_MOVIMIENTOS SET ESTATUSMOVIMIENTOID = 2 WHERE id = {x.Id}";
@@ -1034,7 +1067,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                     {
                         Console.WriteLine($"Error query: {sbInsertFacturacion}");
                         _baseDatos.Update(queryUpdMovimientosMal);
-                        LogFacturacion(x.Id, $"Error para insertar a Facturacion");
+                        LogFacturacion(x.Id, $"Error para insertar a Facturacion", sbInsertFacturacion.ToString());
                     }
                     else
                     {
@@ -1042,7 +1075,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                         if (!updateMovimientos)
                         {
                             Console.WriteLine($"Error query: {queryUpdMovimientos}");
-                            LogFacturacion(x.Id, $"Tuvo un error al cambiar el estado de movimientos");
+                            LogFacturacion(x.Id, $"Tuvo un error al cambiar el estado de movimientos", queryUpdMovimientos);
                             _baseDatos.Update(queryUpdMovimientosMal);
                             _baseDatos.Delete(queryDelFacturacion);
                         }
@@ -1244,10 +1277,17 @@ namespace FacturacionCFDI.Negocio.Polizas
                     if (x.FechaInicio > DateTime.Now)
                         sbInsertFacturacion.Append($",TO_DATE('{x.FechaInicio.ToString("dd/MM/yyyy")} {DateTime.Now.ToString("HH:mm:ss")}', 'dd/mm/yyyy hh24:mi:ss')");
                     else
-                        sbInsertFacturacion.Append($",SYSDATE");
+                        sbInsertFacturacion.Append($",SYSDATE-1");
                     sbInsertFacturacion.Append($",'PSFACT{x.TipoComprobante}'");
                     sbInsertFacturacion.Append($",'{FacturacionId.ToString("D10")}'");
-                    sbInsertFacturacion.Append($",'{RfcReceptor}'");
+                    if (ValidarRFC(RfcReceptor))
+                    {
+                        sbInsertFacturacion.Append($",'{RfcReceptor}'");
+                    }
+                    else
+                    {
+                        sbInsertFacturacion.Append($",'XAXX010101000'");
+                    }
                     sbInsertFacturacion.Append($",'{nombreReceptor}'");
                     sbInsertFacturacion.Append($",'{x.CodigoConcepto}'");
                     sbInsertFacturacion.Append($",'{x.CodigoProducto}'");
@@ -1269,7 +1309,13 @@ namespace FacturacionCFDI.Negocio.Polizas
                     sbInsertFacturacion.Append($",0");
                     sbInsertFacturacion.Append($",SYSDATE");
                     sbInsertFacturacion.Append($",SYSDATE");
-                    if (ValidarRFC(RfcReceptor))
+                    if (x.EstatusFacturaMadre != 2)
+                        sbInsertFacturacion.Append($",8");
+                    else if (x.FechaInicio > DateTime.Now)
+                        sbInsertFacturacion.Append($",6");
+                    else
+                        sbInsertFacturacion.Append($",1");
+                    /*if (ValidarRFC(RfcReceptor))
                     {
                         if (x.EstatusFacturaMadre != 2)
                             sbInsertFacturacion.Append($",8");
@@ -1281,7 +1327,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                     else
                     {
                         sbInsertFacturacion.Append($",992");
-                    }
+                    }*/
                     sbInsertFacturacion.Append($",{x.Id})");
 
                     var queryUpdMovimientos = $@"UPDATE POLIZAS_MOVIMIENTOS SET ESTATUSMOVIMIENTOID = 2 WHERE id = {x.Id}";
@@ -1294,13 +1340,13 @@ namespace FacturacionCFDI.Negocio.Polizas
                     {
                         Console.WriteLine($"Error query: {sbInsertFacturacion}");
                         _baseDatos.Update(queryUpdMovimientosMal);
-                        LogFacturacion(x.Id, $"Error para insertar a Facturacion");
+                        LogFacturacion(x.Id, $"Error para insertar a Facturacion", sbInsertFacturacion.ToString());
                     } else {
                         var updateMovimientos = _baseDatos.Update(queryUpdMovimientos);
                         if (!updateMovimientos)
                         {
                             Console.WriteLine($"Error query: {queryUpdMovimientos}");
-                            LogFacturacion(x.Id, $"Tuvo un error al cambiar el estado de movimientos");
+                            LogFacturacion(x.Id, $"Tuvo un error al cambiar el estado de movimientos", queryUpdMovimientos);
                             _baseDatos.Update(queryUpdMovimientosMal);
                             _baseDatos.Delete(queryDelFacturacion);
                         }
@@ -1313,19 +1359,6 @@ namespace FacturacionCFDI.Negocio.Polizas
                 }
 
                 idFacFin = idFacturacion;
-
-                List<Movimientos> rows = _baseDatos.Select<Movimientos>($"SELECT * FROM POLIZAS_MOVIMIENTOS WHERE ID IN (SELECT MOVIMIENTOSID FROM POLIZAS_FACTURACION WHERE ID >= {idFacIni} AND ID <= {idFacFin} AND POLIZASID = 0)");
-
-                foreach (var row in rows)
-                {
-                    int idCon = _baseDatos.SelectFirst<int>($"SELECT ID FROM POLIZAS_CONCENTRADO WHERE SISTEMA = '{row.Sistema}' AND POLIZA = '{row.Poliza}' AND ANIOINICIO = '{row.FechaInicio.ToString("yyyy")}'");
-                    if (idCon != 0)
-                    {
-                        _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET POLIZASID = {idCon} WHERE MOVIMIENTOSID = {row.Id}");
-                        Console.WriteLine("entro");
-                    }
-
-                }
 
                 #region ERROR CODIGO
                 /*var querys = modelo.Select(x =>
@@ -1689,14 +1722,14 @@ namespace FacturacionCFDI.Negocio.Polizas
         /// <param name="facturaId">ID Tabla POLIZAS_FACTURACION</param>
         /// <param name="mensaje">Mensaje</param>
         /// <returns></returns>
-        private async Task LogFacturacion(int movimientoId, string mensaje)
+        private async Task LogFacturacion(int movimientoId, string mensaje, string query)
         {
             try
             {
                 var id = _baseDatos.SelectFirst<int>(QUERY_POLIZAS_LOGFACTURACION_ID);
 
                 if (id > 0)
-                    _baseDatos.Insert($"INSERT INTO POLIZAS_LOGFACTURACION VALUES ({id}, {movimientoId}, SYSDATE, '{mensaje}', 'servicio')");
+                    _baseDatos.Insert($"INSERT INTO POLIZAS_LOGFACTURACION VALUES ({id}, {movimientoId}, SYSDATE, '{mensaje}', 'servicio', '{query}')");
             }
             catch
             {

@@ -42,7 +42,9 @@ namespace FacturacionCFDI.Negocio.Polizas
         private const string QUERY_FACTURACION_CONCEPTOFINANCIAMIENTO37 = "SELECT VALOR FROM  CONFIGURACIONSISTEMA WHERE LLAVE = 'PolizaConceptoFinanciamiento37'";
         private const string QUERY_FACTURACION_CONCEPTOFINANCIAMIENTO39 = "SELECT VALOR FROM  CONFIGURACIONSISTEMA WHERE LLAVE = 'PolizaConceptoFinanciamiento39'";
         private const string QUERY_FACTURACION_RECEPTOR = "SELECT RFCRECEPTOR AS Rfc ,NOMBRERECEPTOR AS Nombre FROM POLIZAS_FACTURACION WHERE ESTATUSFACTURACIONID = 1 AND NOT EXISTS (SELECT RFC FROM FACTURACION_RECEPTOR WHERE RFC = RFCRECEPTOR) GROUP BY RFCRECEPTOR ,NOMBRERECEPTOR ORDER BY RFCRECEPTOR";
-        private const string QUERY_FACTURACION_RELACIONFACTURAS = "SELECT pf.id AS polizafacturacionid, pf.serie AS serie, pf.folio AS folio, pf.fechacomprobante AS fecha, CASE WHEN fcfp.formapago is null THEN '99' ELSE fcfp.formapago END AS formapagoid, round(pf.primaneta + pf.financiamiento + pf.gasto, 2) AS subtotal, CASE pf.tipocomprobante WHEN 'P' THEN 0 ELSE 1 END AS tipocambio, round((pf.primaneta + pf.financiamiento + pf.gasto) * 1.16, 2) AS total, fctc.id AS tipocomprobanteid, pf.lugarexpedicion AS lugarexpedicion, fr.id AS rfcreceptorid, fr.rfc AS rfcreceptor, CASE fr.id WHEN 1 THEN pf.nombrereceptor ELSE NULL END AS nombrereceptor, pf.codigoconcepto AS codigoconcepto, pf.codigoproducto AS conceptonoidentificacion, 1 AS conceptocantidad, round(pf.primaneta, 2) AS conceptoprimamonto, round(pf.primaneta * 0.16, 4) AS conceptoprimaiva, round(pf.financiamiento, 2) AS conceptofinanciamientomonto, round(pf.financiamiento * 0.16, 4) AS conceptofinanciamientoiva, round(pf.gasto, 2) AS conceptogastomonto, round(pf.gasto * 0.16, 4) AS conceptogastoiva, CASE pf.polizamadre WHEN 1 THEN NULL ELSE fc.facturauuid END AS cfdirelacionado, pf.fechapago AS pagofechapago, CASE WHEN fcfp.formapago is null THEN '99' ELSE fcfp.formapago END AS pagoformapago, pf.totalpagado AS pagomonto, CASE pf.polizamadre WHEN 1 THEN NULL ELSE fc.facturauuid END AS pagoiddocumento, pf.parcialidad AS pagonumparcialidad, CASE pf.parcialidad WHEN 1 THEN round(pc.totalv, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) END AS pagosaldoanterior, CASE pf.parcialidad WHEN 1 THEN round(pc.totalfacturado - pf.totalpagado, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) - pf.totalpagado END AS pagosaldoinsoluto, pf.polizasid as polizasid, pm.causaendoso as causaendoso FROM POLIZAS_FACTURACION pf LEFT JOIN facturacion_catformapago fcfp ON lpad(pf.formapago, 2, '0') = fcfp.formapago INNER JOIN facturacion_cattipodecomprobante fctc ON pf.tipocomprobante = fctc.tipodecomprobante LEFT JOIN facturacion_receptor fr ON pf.rfcreceptor = fr.rfc INNER JOIN polizas_concentrado pc ON pf.polizasid = pc.id INNER JOIN polizas_facturacion pfm ON pc.id = pfm.polizasid AND pfm.polizamadre = 1 and pfm.estatusfacturacionid = 2 INNER JOIN facturacion_comprobante fc ON pfm.comprobanteid = fc.id INNER JOIN polizas_movimientos pm ON pf.movimientosid = pm.id WHERE pf.ESTATUSFACTURACIONID = 1 AND round(pc.totalfacturado - pf.totalpagado, 2) >= 0 AND round(pc.totalfacturado - pc.totalpagado, 2) - pf.totalpagado >= 0 ORDER BY pagoiddocumento ASC, PAGONUMPARCIALIDAD ASC";
+        private const string QUERY_FACTURACION_RELACIONFACTURASGLOBALES = "SELECT pf.id AS polizafacturacionid, pf.serie AS serie, pf.folio AS folio, pf.fechacomprobante AS fecha, CASE WHEN fcfp.formapago is null THEN '99' ELSE fcfp.formapago END AS formapagoid, round(pf.primaneta + pf.financiamiento + pf.gasto, 2) AS subtotal, CASE pf.tipocomprobante WHEN 'P' THEN 0 ELSE 1 END AS tipocambio, round((pf.primaneta + pf.financiamiento + pf.gasto) * 1.16, 2) AS total, fctc.id AS tipocomprobanteid, pf.lugarexpedicion AS lugarexpedicion, fr.id AS rfcreceptorid, fr.rfc AS rfcreceptor, CASE fr.id WHEN 1 THEN pf.nombrereceptor ELSE NULL END AS nombrereceptor, pf.codigoconcepto AS codigoconcepto, pf.codigoproducto AS conceptonoidentificacion, 1 AS conceptocantidad, round(pf.primaneta, 2) AS conceptoprimamonto, round(pf.primaneta * 0.16, 4) AS conceptoprimaiva, round(pf.financiamiento, 2) AS conceptofinanciamientomonto, round(pf.financiamiento * 0.16, 4) AS conceptofinanciamientoiva, round(pf.gasto, 2) AS conceptogastomonto, round(pf.gasto * 0.16, 4) AS conceptogastoiva, NULL AS cfdirelacionado, pf.fechapago AS pagofechapago, CASE WHEN fcfp.formapago is null THEN '99' ELSE fcfp.formapago END AS pagoformapago, pf.totalpagado AS pagomonto, NULL AS pagoiddocumento, pf.parcialidad AS pagonumparcialidad, CASE pf.parcialidad WHEN 1 THEN round(pc.totalv, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) END AS pagosaldoanterior, CASE pf.parcialidad WHEN 1 THEN round(pc.totalfacturado - pf.totalpagado, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) - pf.totalpagado END AS pagosaldoinsoluto, pf.polizasid as polizasid, pm.causaendoso as causaendoso, pm.poliza as poliza, pm.sistema as sistema FROM POLIZAS_FACTURACION pf LEFT JOIN facturacion_catformapago fcfp ON lpad(pf.formapago, 2, '0') = fcfp.formapago INNER JOIN facturacion_cattipodecomprobante fctc ON pf.tipocomprobante = fctc.tipodecomprobante LEFT JOIN facturacion_receptor fr ON pf.rfcreceptor = fr.rfc INNER JOIN polizas_concentrado pc ON pf.polizasid = pc.id INNER JOIN polizas_movimientos pm ON pf.movimientosid = pm.id WHERE pf.ESTATUSFACTURACIONID = 1 ORDER BY pagoiddocumento ASC, PAGONUMPARCIALIDAD ASC";
+        private const string QUERY_FACTURACION_RELACIONFACTURASINGRESOSEGRESOS = "SELECT pf.id AS polizafacturacionid, pf.serie AS serie, pf.folio AS folio, pf.fechacomprobante AS fecha, CASE WHEN fcfp.formapago is null THEN '99' ELSE fcfp.formapago END AS formapagoid, round(pf.primaneta + pf.financiamiento + pf.gasto, 2) AS subtotal, CASE pf.tipocomprobante WHEN 'P' THEN 0 ELSE 1 END AS tipocambio, round((pf.primaneta + pf.financiamiento + pf.gasto) * 1.16, 2) AS total, fctc.id AS tipocomprobanteid, pf.lugarexpedicion AS lugarexpedicion, fr.id AS rfcreceptorid, fr.rfc AS rfcreceptor, CASE fr.id WHEN 1 THEN pf.nombrereceptor ELSE NULL END AS nombrereceptor, pf.codigoconcepto AS codigoconcepto, pf.codigoproducto AS conceptonoidentificacion, 1 AS conceptocantidad, round(pf.primaneta, 2) AS conceptoprimamonto, round(pf.primaneta * 0.16, 4) AS conceptoprimaiva, round(pf.financiamiento, 2) AS conceptofinanciamientomonto, round(pf.financiamiento * 0.16, 4) AS conceptofinanciamientoiva, round(pf.gasto, 2) AS conceptogastomonto, round(pf.gasto * 0.16, 4) AS conceptogastoiva, CASE pf.polizamadre WHEN 1 THEN NULL ELSE fc.facturauuid END AS cfdirelacionado, pf.fechapago AS pagofechapago, CASE WHEN fcfp.formapago is null THEN '99' ELSE fcfp.formapago END AS pagoformapago, pf.totalpagado AS pagomonto, CASE pf.polizamadre WHEN 1 THEN NULL ELSE fc.facturauuid END AS pagoiddocumento, pf.parcialidad AS pagonumparcialidad, CASE pf.parcialidad WHEN 1 THEN round(pc.totalv, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) END AS pagosaldoanterior, CASE pf.parcialidad WHEN 1 THEN round(pc.totalfacturado - pf.totalpagado, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) - pf.totalpagado END AS pagosaldoinsoluto, pf.polizasid as polizasid, pm.causaendoso as causaendoso, pm.poliza as poliza, pm.sistema as sistema FROM POLIZAS_FACTURACION pf LEFT JOIN facturacion_catformapago fcfp ON lpad(pf.formapago, 2, '0') = fcfp.formapago INNER JOIN facturacion_cattipodecomprobante fctc ON pf.tipocomprobante = fctc.tipodecomprobante LEFT JOIN facturacion_receptor fr ON pf.rfcreceptor = fr.rfc INNER JOIN polizas_concentrado pc ON pf.polizasid = pc.id INNER JOIN polizas_facturacion pfm ON pc.id = pfm.polizasid AND pfm.polizamadre = 1 and pfm.estatusfacturacionid = 2 INNER JOIN facturacion_comprobante fc ON pfm.comprobanteid = fc.id INNER JOIN polizas_movimientos pm ON pf.movimientosid = pm.id WHERE pf.ESTATUSFACTURACIONID = 1 ORDER BY pagoiddocumento ASC, PAGONUMPARCIALIDAD ASC";
+        private const string QUERY_FACTURACION_RELACIONFACTURASPAGOS = "SELECT pf.id AS polizafacturacionid, pf.serie AS serie, pf.folio AS folio, pf.fechacomprobante AS fecha, CASE WHEN fcfp.formapago is null THEN '99' ELSE fcfp.formapago END AS formapagoid, round(pf.primaneta + pf.financiamiento + pf.gasto, 2) AS subtotal, CASE pf.tipocomprobante WHEN 'P' THEN 0 ELSE 1 END AS tipocambio, round((pf.primaneta + pf.financiamiento + pf.gasto) * 1.16, 2) AS total, fctc.id AS tipocomprobanteid, pf.lugarexpedicion AS lugarexpedicion, fr.id AS rfcreceptorid, fr.rfc AS rfcreceptor, CASE fr.id WHEN 1 THEN pf.nombrereceptor ELSE NULL END AS nombrereceptor, pf.codigoconcepto AS codigoconcepto, pf.codigoproducto AS conceptonoidentificacion, 1 AS conceptocantidad, round(pf.primaneta, 2) AS conceptoprimamonto, round(pf.primaneta * 0.16, 4) AS conceptoprimaiva, round(pf.financiamiento, 2) AS conceptofinanciamientomonto, round(pf.financiamiento * 0.16, 4) AS conceptofinanciamientoiva, round(pf.gasto, 2) AS conceptogastomonto, round(pf.gasto * 0.16, 4) AS conceptogastoiva, CASE pf.polizamadre WHEN 1 THEN NULL ELSE fc.facturauuid END AS cfdirelacionado, pf.fechapago AS pagofechapago, CASE WHEN fcfp.formapago is null THEN '99' ELSE fcfp.formapago END AS pagoformapago, pf.totalpagado AS pagomonto, CASE pf.polizamadre WHEN 1 THEN NULL ELSE fc.facturauuid END AS pagoiddocumento, pf.parcialidad AS pagonumparcialidad, CASE pf.parcialidad WHEN 1 THEN round(pc.totalv, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) END AS pagosaldoanterior, CASE pf.parcialidad WHEN 1 THEN round(pc.totalfacturado - pf.totalpagado, 2) ELSE round(pc.totalfacturado - pc.totalpagado, 2) - pf.totalpagado END AS pagosaldoinsoluto, pf.polizasid as polizasid, pm.causaendoso as causaendoso, pm.poliza as poliza, pm.sistema as sistema FROM POLIZAS_FACTURACION pf LEFT JOIN facturacion_catformapago fcfp ON lpad(pf.formapago, 2, '0') = fcfp.formapago INNER JOIN facturacion_cattipodecomprobante fctc ON pf.tipocomprobante = fctc.tipodecomprobante LEFT JOIN facturacion_receptor fr ON pf.rfcreceptor = fr.rfc INNER JOIN polizas_concentrado pc ON pf.polizasid = pc.id INNER JOIN polizas_facturacion pfm ON pc.id = pfm.polizasid AND pfm.polizamadre = 1 and pfm.estatusfacturacionid = 2 INNER JOIN facturacion_comprobante fc ON pfm.comprobanteid = fc.id INNER JOIN polizas_movimientos pm ON pf.movimientosid = pm.id WHERE pf.ESTATUSFACTURACIONID = 1 and pf.TIPOCOMPROBANTE = 'P' ORDER BY pagoiddocumento ASC, PAGONUMPARCIALIDAD ASC";
 
         private int _comprobanteId;
         private int _cfdiRelacionadosId;
@@ -76,20 +78,26 @@ namespace FacturacionCFDI.Negocio.Polizas
             _baseDatos = baseDatos;
         }
 
-        public async Task<GenericResponse> SincronizarFacturas()
+        public async Task<GenericResponse> SincronizarFacturas(string tipo)
         {
             try
             {
                 await ObtenerVariablesFactura();
+                List<FacturaPoliza> relacionFacturas = null;
+                if (tipo == "G")
+                    relacionFacturas = await _baseDatos.SelectAsync<FacturaPoliza>(QUERY_FACTURACION_RELACIONFACTURASGLOBALES);
+                else if (tipo == "I" || tipo == "E")
+                    relacionFacturas = await _baseDatos.SelectAsync<FacturaPoliza>(QUERY_FACTURACION_RELACIONFACTURASINGRESOSEGRESOS);
+                else if (tipo == "P")
+                    relacionFacturas = await _baseDatos.SelectAsync<FacturaPoliza>(QUERY_FACTURACION_RELACIONFACTURASPAGOS);
 
-                var relacionFacturas = await _baseDatos.SelectAsync<FacturaPoliza>(QUERY_FACTURACION_RELACIONFACTURAS);
                 if (!(relacionFacturas?.Any() ?? false))
-                    return new GenericResponse()
-                    {
-                        Codigo = 2,
-                        Mensaje = "Sin registros para guardar en las tablas de FACTURACION",
-                        Data = false
-                    };
+                return new GenericResponse()
+                {
+                    Codigo = 2,
+                    Mensaje = "Sin registros para guardar en las tablas de FACTURACION",
+                    Data = false
+                };
 
                 decimal? sum_totales = 0;
                 decimal? pago_anterior = 0;
@@ -109,7 +117,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                         llaveunica = Convert.ToDateTime(x.Fecha).ToString("dd/MM/yyyy") + x.PolizasId + x.Poliza + x.Sistema + x.CausaEndoso.Replace(" ", "") + x.RfcReceptor + x.Total;
                     } else {
                         if(x.PagoFechaPago != null)
-                            llaveunica = Convert.ToDateTime(x.PagoFechaPago).ToString("dd/MM/yyyy") + x.PolizasId + x.Poliza + x.Sistema + x.CausaEndoso.Replace(" ", "") + x.PagoNumParcialidad + x.RfcReceptor + x.TotalPagado;
+                            llaveunica = Convert.ToDateTime(x.PagoFechaPago).ToString("dd")+"/"+ Convert.ToDateTime(x.PagoFechaPago).ToString("MM") + "/" + Convert.ToDateTime(x.PagoFechaPago).ToString("yyyy") + x.PolizasId + x.Poliza + x.Sistema + x.CausaEndoso.Replace(" ", "") + x.PagoNumParcialidad + x.RfcReceptor + x.PagoMonto;
                     }
 
                     #region Query INSERT,DELETE FACTURACION_COMPROBANTE
@@ -342,8 +350,8 @@ namespace FacturacionCFDI.Negocio.Polizas
                     if (!insertComprobate)
                     {
                         Console.WriteLine($"Error query: {insComprobante}");
+                        LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al insertar en comprobante", insComprobante.ToString(), llaveunica);
                         _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
-                        LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al insertar en comprobante");
                     }
                     else
                     {
@@ -362,7 +370,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                             _baseDatos.Delete(delConcepto);
                             _baseDatos.Delete(delComprobante);
                             _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
-                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con los conceptos");
+                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con los conceptos","NO HAY QUERY", llaveunica);
                         }
                         else
                         {
@@ -385,7 +393,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                     _baseDatos.Delete(delConcepto);
                                     _baseDatos.Delete(delComprobante);
                                     _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
-                                    LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con los impuestos");
+                                    LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con los impuestos", "NO HAY QUERY", llaveunica);
                                 }
                                 else
                                 {
@@ -401,7 +409,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                             _baseDatos.Delete(delConcepto);
                                             _baseDatos.Delete(delComprobante);
                                             _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
-                                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al editar comprobante");
+                                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al editar comprobante", "NO HAY QUERY", llaveunica);
                                         }
                                         else
                                         {
@@ -421,7 +429,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                             _baseDatos.Delete(delConcepto);
                                             _baseDatos.Delete(delComprobante);
                                             _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
-                                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al querer insertar el cfdirelacionado");
+                                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al querer insertar el cfdirelacionado", "NO HAY QUERY", llaveunica);
                                         }
                                         else
                                         {
@@ -436,7 +444,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                                 _baseDatos.Delete(delCfdiRelacionado);
                                                 _baseDatos.Delete(delComprobante);
                                                 _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
-                                                LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al editar comprobante");
+                                                LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al editar comprobante", "NO HAY QUERY", llaveunica);
                                             } else {
                                                 cont++;
                                                 _comprobanteId++;
@@ -457,7 +465,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                     _baseDatos.Delete(delConcepto);
                                     _baseDatos.Delete(delComprobante);
                                     _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
-                                    LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con al insertar el pago");
+                                    LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con al insertar el pago", "NO HAY QUERY", llaveunica);
                                 }
                                 else
                                 {
@@ -470,7 +478,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                         _baseDatos.Delete(delConcepto);
                                         _baseDatos.Delete(delComprobante);
                                         _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
-                                        LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con al insertar el docto relacionado");
+                                        LogFacturacion(x.PolizaFacturacionId, $"Hubo un error con al insertar el docto relacionado", "NO HAY QUERY", llaveunica);
                                     }
                                     else
                                     {
@@ -484,7 +492,7 @@ namespace FacturacionCFDI.Negocio.Polizas
                                             _baseDatos.Delete(delConcepto);
                                             _baseDatos.Delete(delComprobante);
                                             _baseDatos.Update($"UPDATE POLIZAS_FACTURACION SET ESTATUSFACTURACIONID = 1004 WHERE ID = {x.PolizaFacturacionId}");
-                                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al editar comprobante");
+                                            LogFacturacion(x.PolizaFacturacionId, $"Hubo un error al editar comprobante", "NO HAY QUERY", llaveunica);
                                         }
                                         else
                                         {
@@ -837,14 +845,15 @@ namespace FacturacionCFDI.Negocio.Polizas
         /// <param name="comprobanteId">ID Tabla FACTURACION_COMPROBANTE</param>
         /// <param name="mensaje">Mensaje</param>
         /// <returns></returns>
-        private async Task LogFacturacion(int facturacionId, string mensaje)
+        private async Task LogFacturacion(int facturacionId, string mensaje, string query, string llave)
         {
             try
             {
                 var id = _baseDatos.SelectFirst<int>(QUERY_POLIZAS_LOGFACTURA_ID);
+                string query2 = query.Replace("'","''");
 
                 if (id > 0)
-                    _baseDatos.Insert($"INSERT INTO FACTURACION_LOGFACTURA VALUES ({id}, SYSDATE, '{mensaje}', {facturacionId})");
+                    _baseDatos.Insert($"INSERT INTO FACTURACION_LOGFACTURA VALUES ({id}, SYSDATE, '{mensaje}', {facturacionId}, '{query2}', '{llave}')");
             }
             catch
             {
